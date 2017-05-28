@@ -10,6 +10,6 @@ One person will need to be "Devops" for the duration of the project (pick someon
 ImHere is an attendance-taking app using Flask and Python 2.7.  The Wiki guides you through the installation using GitHub as the source control system, Travis CI as the continuous integration tool, and Google Cloud as the deployment environment.
 
 
-### Have fun! and Don't Break the Build!
+### Have fun! and Don't Break the Build.
 
-This is a test. 
+This works! 

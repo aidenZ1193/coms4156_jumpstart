@@ -4,5 +4,5 @@ from flask import current_app
 class Model:
 
     def get_client(self): 
-        return datastore.Client('imhere-ase-summer-2017')
+        return datastore.Client('coms-4156')
 

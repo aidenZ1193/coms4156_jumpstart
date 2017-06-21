@@ -2,50 +2,134 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Student View (Editted)</title>
+    <title>Student View - 10-98</title>
+    <style>
+        body {
+            font-family: Arial;
+        }
+        h2 {
+            margin-top: 0;
+            margin-bottom:0;
+        }
+        .logout-button {
+            background-color:#92b5a3;
+            border:0 solid white;
+            border-radius: 5px;
+            width: 100px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            text-align:center;
+            font-size:1em;
+            font-weight: bold;
+            color: beige;
+            cursor: pointer;
+        }
+        .logout-button:hover {
+            background-color:#6d887a;
+        }
+
+        .switch2button {
+            background-color:white;
+            border:2px solid #92b5a3;
+            border-radius: 5px;
+            width: 200px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            text-align:center;
+            font-size:1em;
+            color: #92b5a3;
+            cursor: pointer;
+        }
+
+        .switch2button:hover {
+            color: beige;
+            background-color:#6d887a;
+            border:2px solid #6d887a;
+        }
+
+        .heading {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+            margin-top: 5%;
+            margin-bottom: 2%;
+        }
+        .heading > div {
+            width: 30%;
+        }
+
+        .sign-in-container {
+            display: flex;
+            flex-direction:row;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .sign-in-container > div {
+            flex-grow: 1;
+
+            display: inline-block;
+            width: calc(100% / 2 - 10px)
+            margin: 10px 5px 10px 5px;
+        }
+    </style>
 </head>
 
-<body style="background-color:#cccccc;">
-    <form action="/switch_type" method="POST">
-    <button name="type" value="teacher">Switch to teacher view</button>
-    </form>
-    
-    <form action="/oauth/logout" method="POST">
-    <button name="logout">Log out</button>
-    </form><br>
-    
+<body>
+    <div class="heading">
+        <div>
+        </div>
+        <div>
+            <center><h2>ImHere</h2></center>
+        </div>
+        <div>
+            <form action="/oauth/logout" method="POST">
+                <button name="logout" class="logout-button">LOG OUT</button>
+            </form>
+        </div>
+    </div>
     <center>
-    <h2>ImHere</h2><br>
+        <form action="/switch_type" method="POST">
+            <button name="type" value="teacher" class="switch2button">Switch To Teacher View</button>
+        </form>
+    </center>
 
+    <br>
+
+    <div class="sign-in-container">
     <!-- first show classes that have an available session -->
     {% for n in data %}
         {% if n['active'] == 1 %}
+            <div>
+                <center>
+                    <h4>{{n['name']}}</h4>
 
-            <h4>{{n['name']}}</h4>
+                    {% if valid %}
+                        Successful sign-in!
+                    {% elif signed_in %}
+                        You have already signed into the session!
+                    {% else %}
 
-            {% if valid %}
-                Successful sign-in!
-            {% elif signed_in %}
-                You have already signed into the session!
-            {% else %}
+                    <form action="/student/" method="post">
+                        Sign in now!
+                        <input type="text" name="secret_code" placeholder="Secret Code">
+                        <input type="submit" value="Submit">
+                    </form>
 
-            <form action="/student/" method="post">
-                Sign in now!
-                <input type="text" name="secret_code" placeholder="Secret Code">
-                <input type="submit" value="Submit">
-            </form><br>
-
-                {% if submitted %}
-                    {% if not valid %}
-                    <font color="red">Invalid Secret Code</font>
+                    {% if submitted %}
+                        {% if not valid %}
+                            <font color="red">Invalid Secret Code</font>
+                        {% endif %}
                     {% endif %}
-                {% endif %}
-
+                </center>
+            </div>
             {% endif %}
 
         {% endif %}
     {% endfor %}
-
+    </div>
+    <br>
+    <div>
     <!-- then show classes that are not ongoing at this time/date -->
     {% for n in data %}
         {% if n['active'] == 0 %}
@@ -57,7 +141,6 @@
         {% endif %}
     {% endfor %}
 
-    </center>
-
+    </div>
 </body>
 </html>

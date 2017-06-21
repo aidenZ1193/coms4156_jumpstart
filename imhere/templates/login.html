@@ -2,15 +2,42 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Log In - ImHere</title>
+    <title>Log In - ImHere - 10-98</title>
+    <style>
+        body {
+            font-family: Arial;
+        }
+        a {
+            text-decoration: none;
+            color:beige;
+        }
+        .login-button, .register-button {
+            background-color:#92b5a3;
+            border:0 solid white;
+            border-radius: 5px;
+            margin-top: 2%;
+            width: 200px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            text-align:center;
+            font-size:1.3em;
+            font-weight: bold;
+            color: beige;
+            cursor: pointer;
+        }
+        .login-button:hover, .register-button:hover{
+            background-color:#6d887a;
+        }
+
+    </style>
 </head>
 
 <body>
-    <h1><center>ImHere</center></h1><br>
+    <h1 style="margin-top:10%;"><center>ImHere</center></h1><br>
 
     <form method="POST" action="/login">
         <center>
-        <input type="submit" value="Login"><br><br>
+        <input type="submit" value="LOGIN" class="login-button"><br><br>
         </center>
     </form>
 
@@ -20,7 +47,7 @@
     </center>
     {% endif %}
 
-    <center><h4><a href="/register">Register</a></h4></center>
+    <center><h4 class="register-button"><a href="/register">REGISTER</a></h4></center>
 
 </body>
 </html>

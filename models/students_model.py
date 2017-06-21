@@ -42,7 +42,7 @@ class Students(Model):
             secret = results[0]['secret']
             seid = results[0]['seid']
         else:
-            secret, seid = None, -1
+            secret, seid = 999, -1
         return secret, seid
 
     def has_signed_in(self):

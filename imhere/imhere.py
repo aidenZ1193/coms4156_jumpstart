@@ -8,7 +8,7 @@ import apiclient
 import flask
 
 from uuid import uuid4
-from flask import Flask, render_template, request, g
+from flask import Flask, render_template, request
 from models import users_model, index_model, teachers_model, students_model, \
         courses_model, model
 from google.cloud import datastore
@@ -73,14 +73,12 @@ def switch_type():
     if request.form['type'] == 'teacher':
         if im.is_teacher():
             return flask.redirect(flask.url_for('main_teacher'))
-        else:
-            return flask.redirect(flask.url_for('register'))
+        return flask.redirect(flask.url_for('register'))
 
     elif request.form['type'] == 'student':
         if im.is_student():
             return flask.redirect(flask.url_for('main_student'))
-        else:
-            return flask.redirect(flask.url_for('register'))
+        return flask.redirect(flask.url_for('register'))
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -97,8 +95,7 @@ def login():
         return flask.redirect(flask.url_for('main_student'))
     elif im.is_teacher():
         return flask.redirect(flask.url_for('main_teacher'))
-    else:
-        return render_template('login.html', not_registered=True)
+    return render_template('login.html', not_registered=True)
 
 
 @app.route('/student/', methods=['GET', 'POST'])
@@ -147,7 +144,8 @@ def main_teacher():
             cm.open_session()
 
     courses = tm.get_courses_with_session()
-    empty = True if len(courses) == 0 else False
+    length_courses = len(courses)
+    empty = True if length_courses == 0 else False
     context = dict(data=courses)
     return render_template('main_teacher.html', empty=empty, **context)
 
@@ -280,11 +278,8 @@ def register():
 
                 flask.session['is_student'] = True
                 return flask.redirect(flask.url_for('main_student'))
-            else:
-                return render_template(
-                        'register.html',
-                        name=flask.session['google_user']['name'],
-                        invalid_uni=True)
+           
+            return render_template('register.html', name=flask.session['google_user']['name'], invalid_uni=True)
 
         else:
             try:
@@ -296,7 +291,7 @@ def register():
                 })
                 ds.put(entity)
                 flask.session['is_teacher'] = True
-            except:
+            except Exception:
                 pass
             return flask.redirect(flask.url_for('main_teacher'))
 
@@ -312,33 +307,33 @@ def oauth2callback():
     if 'code' not in flask.request.args:
         auth_uri = flow.step1_get_authorize_url()
         return flask.redirect(auth_uri)
-    else:
-        auth_code = flask.request.args.get('code')
-        credentials = flow.step2_exchange(auth_code)
-        flask.session['credentials'] = credentials.to_json()
+    
+    auth_code = flask.request.args.get('code')
+    credentials = flow.step2_exchange(auth_code)
+    flask.session['credentials'] = credentials.to_json()
 
-        # use token to get user profile from google oauth api
-        http_auth = credentials.authorize(httplib2.Http())
-        userinfo_client = apiclient.discovery.build('oauth2', 'v2', http_auth)
-        user = userinfo_client.userinfo().v2().me().get().execute()
+    # use token to get user profile from google oauth api
+    http_auth = credentials.authorize(httplib2.Http())
+    userinfo_client = apiclient.discovery.build('oauth2', 'v2', http_auth)
+    user = userinfo_client.userinfo().v2().me().get().execute()
 
-        # TODO only allow columbia.edu emails
-        # if 'columbia.edu' not in user['email']:
-        #     return flask.redirect(flask.url_for('bademail'))
+    # TODO only allow columbia.edu emails
+    # if 'columbia.edu' not in user['email']:
+    #     return flask.redirect(flask.url_for('bademail'))
 
-        um = users_model.Users()
+    um = users_model.Users()
 
-        flask.session['google_user'] = user
-        flask.session['id'] = um.get_or_create_user(user)
+    flask.session['google_user'] = user
+    flask.session['id'] = um.get_or_create_user(user)
 
-        # now add is_student and is_teacher to flask.session
-        im = index_model.Index(flask.session['id'])
-        flask.session['is_student'] = True if im.is_student() else False
-        flask.session['is_teacher'] = True if im.is_teacher() else False
+    # now add is_student and is_teacher to flask.session
+    im = index_model.Index(flask.session['id'])
+    flask.session['is_student'] = True if im.is_student() else False
+    flask.session['is_teacher'] = True if im.is_teacher() else False
 
-        redirect = flask.session['redirect']
-        flask.session.pop('redirect', None)
-        return flask.redirect(redirect)
+    redirect = flask.session['redirect']
+    flask.session.pop('redirect', None)
+    return flask.redirect(redirect)
 
 
 @app.route('/oauth/logout', methods=['POST', 'GET'])

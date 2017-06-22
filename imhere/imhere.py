@@ -120,6 +120,7 @@ def main_student():
             ### set time and location
             sm.set_timestamp()
             sm.set_coordinates()
+
             ###
             actual_secret, seid, setimestamp, secoordinate, cid = sm.get_secret_and_seid()
             
@@ -127,7 +128,8 @@ def main_student():
                 ### validation check
                 vc = validation_model.ValidationCheck(setimestamp, secoordinate, sm)
                 if vc.validate():
-                    sm.insert_attendance_record(seid)
+                    sm.insert_attendance_record(seid,sm.get_timestamp(), sm.get_coordinates())
+
                     valid = True
                 else:
                     valid = False

@@ -73,10 +73,16 @@ class Students(Model):
                     results.append(session)
             # results = results + list(query.fetch())
         if len(results) == 1:
+            pdb.set_trace()
             secret = results[0]['secret']
             seid = results[0]['seid']
-            setimestamp = results[0]['timestamp']
-            secoordinate = resutls[0]['coordinate']
+
+            if 'timestamp' not in results[0].keys() and 'coordinate' not in results[0].keys():
+                setimestamp = datetime.now()
+                secoordinate = [40.8584, -73.0996]
+            else:
+                setimestamp = results[0]['timestamp']
+                secoordinate = resutls[0]['coordinate']
             ###
             cid = results[0]['cid']
         else:
@@ -101,13 +107,15 @@ class Students(Model):
                 results = results + list(query.fetch())
             return True if len(results) == 1 else False
 
-    def insert_attendance_record(self, seid):
+    def insert_attendance_record(self, seid, timestamp, coordinates):
         key = self.ds.key('attendance_records')
         entity = datastore.Entity(
             key=key)
         entity.update({
             'sid': self.sid,
-            'seid': int(seid)
+            'seid': int(seid),
+            'timestamp': timestamp,
+            'coordinates': coordinates
         })
         self.ds.put(entity)
 

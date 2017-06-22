@@ -153,6 +153,7 @@ class Courses(Model):
         '''
         # auto-generated secret code for now
         randsecret = randint(1000, 9999)
+        pdb.set_trace()
 
         ### get coordinate
         url = "http://ip-api.com/json"
@@ -160,7 +161,7 @@ class Courses(Model):
 
         self.lat = data['lat']
         self.lon = data['lon']
-        pdb.set_trace()
+        
 
 
         key = self.ds.key('sessions')
@@ -169,8 +170,8 @@ class Courses(Model):
         entity.update({
             'cid': int(self.cid),
             'secret': int(randsecret),      
-            'coordinate': (self.lat, self.lon),           ### adding value here
-            'timestamp': datatime.now(),
+            'coordinate': [self.lat, self.lon],           ### adding value here
+            'timestamp': datetime.now(),
             'expires': datetime.now() + timedelta(days=1)
         })
         self.ds.put(entity)

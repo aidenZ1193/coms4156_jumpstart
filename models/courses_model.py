@@ -170,7 +170,7 @@ class Courses(Model):
             'cid': int(self.cid),
             'secret': int(randsecret),      
             'coordinate': (self.lat, self.lon),           ### adding value here
-            'timestamp': datatiem.now(),
+            'timestamp': datatime.now(),
             'expires': datetime.now() + timedelta(days=1)
         })
         self.ds.put(entity)

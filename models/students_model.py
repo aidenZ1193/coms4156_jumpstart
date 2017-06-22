@@ -1,6 +1,9 @@
 from model import Model
 from datetime import datetime, date
 from google.cloud import datastore
+
+import json                     # for getting coordinates
+from urllib2 import urlopen     # for open url to get address
 import pdb
 
 class Students(Model):

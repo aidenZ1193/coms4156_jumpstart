@@ -122,7 +122,7 @@ def main_student():
             actual_secret, seid, cid = sm.get_secret_and_seid()
             if int(provided_secret) == int(actual_secret):
                 ### validation check
-                vc = validation_mdoel.ValidationCheck(cid, sm)
+                vc = validation_model.ValidationCheck(cid, sm)
                 if vc.validate():
                     sm.insert_attendance_record(seid)
                     valid = True

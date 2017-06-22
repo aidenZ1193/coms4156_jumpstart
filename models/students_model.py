@@ -30,8 +30,6 @@ class Students(Model):
         self.lat = data['lat']
         self.lon = data['lon']
 
-        pdb.set_trace()
-
         return [self.lat, self.lon]
 
     def get_timestamp(self):
@@ -74,6 +72,7 @@ class Students(Model):
             # results = results + list(query.fetch())
         if len(results) == 1:
             secret = results[0]['secret']
+            pdb.set_trace()
             seid = results[0]['seid']
             ###
             cid = results[0]['cid']

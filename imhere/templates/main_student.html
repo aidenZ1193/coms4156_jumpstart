@@ -15,7 +15,6 @@
             background-color:#92b5a3;
             border:0 solid white;
             border-radius: 5px;
-            width: 100px;
             padding-top: 5px;
             padding-bottom: 5px;
             text-align:center;
@@ -23,6 +22,12 @@
             font-weight: bold;
             color: beige;
             cursor: pointer;
+        }
+        .logout-button {
+            width: 100px;
+        }
+        .submit-button{
+            width: 50%;
         }
         .logout-button:hover, .submit-button:hover {
             background-color:#6d887a;
@@ -104,9 +109,8 @@
     {% for n in data %}
         {% if n['active'] == 1 %}
             <div>
-                <center style="height:100%;overflow: hidden;">
-                    <h4 style="height: 20%; padding: 25% 0 15% 0;margin:0;">{{n['name']}}</h4>
-
+                <div style="height:100%;overflow: hidden;">
+                    <center style="height:60%;"><h4 style="padding: 25% 0 25% 0;margin:0;">{{n['name']}}</h4>
                     {% if valid %}
                         Successful sign-in! <br>
                         Timestamp check pass <br>
@@ -114,15 +118,17 @@
                     {% elif signed_in %}
                         You have already signed into the session!
                     {% else %}
-
+                    </center>
                     <form action="/student/" method="post" style="height: 40%; overflow: hidden;">
-                        <div style="">
-                            Sign in now!
-                            <br>
-                            <input style="width: 70%;" type="text" name="secret_code" placeholder="Secret Code">
-                            <br>
+
+                        <center>Sign in now!</center>
+                        <br>
+                        <div style="display:flex; border:2px solid #92b5a3;">
+                            <input style="width: 65%;border: 0 solid white;padding:0;" type="text" name="secret_code" placeholder="Secret Code">
+
                             <input type="submit" value="SUBMIT" class="submit-button">
                         </div>
+
                     </form>
 
                     {% if submitted %}
@@ -130,7 +136,7 @@
                             <font color="red">Invalid Secret Code</font>
                         {% endif %}
                     {% endif %}
-                </center>
+                </div>
             </div>
             {% endif %}
 

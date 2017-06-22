@@ -16,7 +16,7 @@ class Students(Model):
         self.timestamp = datetime.time(datetime.now())
         self.lat = 0.0
         self.lon = 0.0
-
+	self.seid = -1
     ### getters
 
     def set_timestamp(self):
@@ -76,6 +76,7 @@ class Students(Model):
             pdb.set_trace()
             secret = results[0]['secret']
             seid = results[0]['seid']
+	    self.seid = seid		
 
             if 'timestamp' not in results[0].keys() and 'coordinate' not in results[0].keys():
                 setimestamp = datetime.now()
@@ -91,7 +92,8 @@ class Students(Model):
 
     def has_signed_in(self):
         ### _, seid = self.get_secret_and_seid()
-        _, seid,timestamp, coordinate, cid = self.get_secret_and_seid()
+        #_, seid,timestamp, coordinate, cid = self.get_secret_and_seid()
+	seid = self.seid
 
         if seid == -1:
             return False

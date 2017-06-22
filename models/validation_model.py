@@ -37,10 +37,9 @@ class ValidationCheck(Model):
 		student_location = (self.student_coordinates[0], self.student_coordinates[1])
 		teacher_location = (self.teacher_coordinates[0], self.teacher_coordinates[1])
 
-		distance = great_circle(student_location, teacher_location).miles
-		conv_fac = 0.621371		# factor to convert between miles and meters
+		distance = great_circle(student_location, teacher_location).meters
 
-		if (distance * 1.0)/conv_fac <= 25:
+		if distance <= 25:
 			self.location_pass = True
 
 		return self.location_pass

@@ -79,14 +79,14 @@ class Students(Model):
 
             if 'timestamp' not in results[0].keys() and 'coordinate' not in results[0].keys():
                 setimestamp = datetime.now()
-                secoordinate = [40.8584, -73.0996]
+                secoordinate = [40.8006, -73.9653]
             else:
                 setimestamp = results[0]['timestamp']
                 secoordinate = resutls[0]['coordinate']
             ###
             cid = results[0]['cid']
         else:
-            secret, seid, setimestamp, secoordinate, cid = 999, -1, datetime.now(), [40.8584, -73.0996], -1
+            secret, seid, setimestamp, secoordinate, cid = 999, -1, datetime.now(), [40.8006, -73.9653], -1
         return secret, seid, setimestamp, secoordinate, cid
 
     def has_signed_in(self):

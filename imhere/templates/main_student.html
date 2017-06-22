@@ -110,7 +110,7 @@
         {% if n['active'] == 1 %}
             <div>
                 <div style="height:100%;overflow: hidden;">
-                    <center style="height:60%;"><h4 style="padding: 25% 0 25% 0;margin:0;">{{n['name']}}</h4>
+                    <center style="height:50%;"><h4 style="padding: 25% 0 25% 0;margin:0;">{{n['name']}}</h4>
                     {% if valid %}
                         Successful sign-in! <br>
                         Timestamp check pass <br>
@@ -133,7 +133,7 @@
 
                     {% if submitted %}
                         {% if not valid %}
-                            <font color="red">Invalid Secret Code</font>
+                            <center style="height:10%;"><font color="red">Invalid Secret Code</font></center>
                         {% endif %}
                     {% endif %}
                 </div>

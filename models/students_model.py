@@ -2,11 +2,45 @@ from model import Model
 from datetime import datetime, date
 from google.cloud import datastore
 
+import json                     # for getting coordinates
+from urllib2 import urlopen     # for open url to get address
+import pdb
+
 class Students(Model):
 
     def __init__(self, sid):
         self.sid = sid
         self.ds = self.get_client()
+
+        # time and location:
+        self.timestamp = datetime.time(datetime.now())
+        self.lat = 0.0
+        self.lon = 0.0
+
+    ### getters
+
+    def set_timestamp(self):
+        self.timestamp = datetime.time(datetime.now())
+        return self.timestamp
+
+    def set_coordinates(self):
+        url = "http://ip-api.com/json"
+        data = json.load(urlopen(url))
+
+        self.lat = data['lat']
+        self.lon = data['lon']
+
+        pdb.set_trace()
+
+        return [self.lat, self.lon]
+
+    def get_timestamp(self):
+        return self.timestamp
+
+    def get_coordinates(self):
+        return [self.lat, self.lon]
+
+    ###
 
     def get_uni(self):
         query = self.ds.query(kind='student')
@@ -41,12 +75,15 @@ class Students(Model):
         if len(results) == 1:
             secret = results[0]['secret']
             seid = results[0]['seid']
+            ###
+            cid = results[0]['cid']
         else:
-            secret, seid = 999, -1
-        return secret, seid
+            secret, seid, cid = 999, -1, -1
+        return secret, seid, cid
 
     def has_signed_in(self):
-        _, seid = self.get_secret_and_seid()
+        ### _, seid = self.get_secret_and_seid()
+        _, seid, cid = self.get_secret_and_seid()
 
         if seid == -1:
             return False

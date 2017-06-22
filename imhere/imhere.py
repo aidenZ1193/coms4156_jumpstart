@@ -114,10 +114,20 @@ def main_student():
     elif request.method == 'POST':
         if 'secret_code' in request.form.keys():
             provided_secret = request.form['secret_code']
-            actual_secret, seid = sm.get_secret_and_seid()
+
+            ### set time and location
+            sm.set_timestamp()
+            sm.set_coordinates()
+            ###
+            actual_secret, seid, cid = sm.get_secret_and_seid()
             if int(provided_secret) == int(actual_secret):
-                sm.insert_attendance_record(seid)
-                valid = True
+                ### validation check
+                vc = validation_mdoel.ValidationCheck(cid, sm)
+                if vc.validate():
+                    sm.insert_attendance_record(seid)
+                    valid = True
+                else:
+                    valid = False
             else:
                 valid = False
 

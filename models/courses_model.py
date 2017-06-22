@@ -16,7 +16,7 @@ class Courses(Model):
         self.ds = self.get_client()
 
         ## adding coordinates and sign-in time
-        self.timestamp = datetime.time(datetime.now())
+        self.timestamp = datetime.now()
         self.lat = 0.0
         self.lon = 0.0              # will modify it when get ip address in imhere view_class
 
@@ -161,7 +161,7 @@ class Courses(Model):
 
         self.lat = data['lat']
         self.lon = data['lon']
-        
+        self.timestamp = datetime.now()
 
 
         key = self.ds.key('sessions')
@@ -169,7 +169,8 @@ class Courses(Model):
             key=key)
         entity.update({
             'cid': int(self.cid),
-            'secret': int(randsecret),      
+            #'secret': int(randsecret),    
+            'secret': randsecret,  
             'coordinate': [self.lat, self.lon],           ### adding value here
             'timestamp': datetime.now(),
             'expires': datetime.now() + timedelta(days=1)

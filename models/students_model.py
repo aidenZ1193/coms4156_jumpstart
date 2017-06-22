@@ -20,7 +20,7 @@ class Students(Model):
     ### getters
 
     def set_timestamp(self):
-        self.timestamp = datetime.time(datetime.now())
+        self.timestamp = datetime.now()
         return self.timestamp
 
     def set_coordinates(self):
@@ -62,27 +62,30 @@ class Students(Model):
         query = self.ds.query(kind='enrolled_in')
         enrolled_in = list(query.fetch())
         results = list()
+        #pdb.set_trace()
         for enrolled in enrolled_in:
             query = self.ds.query(kind='sessions')
             query.add_filter('cid', '=', enrolled['cid'])
             sessions = list(query.fetch())
             for session in sessions:
+                #pdb.set_trace()
                 if session['expires'].replace(tzinfo=None) > datetime.now():
                     results.append(session)
             # results = results + list(query.fetch())
         if len(results) == 1:
             secret = results[0]['secret']
-            pdb.set_trace()
             seid = results[0]['seid']
+            setimestamp = results[0]['timestamp']
+            secoordinate = resutls[0]['coordinate']
             ###
             cid = results[0]['cid']
         else:
-            secret, seid, cid = 999, -1, -1
-        return secret, seid, cid
+            secret, seid, setimestamp, secoordinate, cid = 999, -1, datetime.now(), [40.8584, -73.0996], -1
+        return secret, seid, setimestamp, secoordinate, cid
 
     def has_signed_in(self):
         ### _, seid = self.get_secret_and_seid()
-        _, seid, cid = self.get_secret_and_seid()
+        _, seid,timestamp, coordinate, cid = self.get_secret_and_seid()
 
         if seid == -1:
             return False

@@ -10,8 +10,10 @@ import flask
 from uuid import uuid4
 from flask import Flask, render_template, request
 from models import users_model, index_model, teachers_model, students_model, \
-        courses_model, model
+        courses_model, model, validation_model
 from google.cloud import datastore
+
+import pdb
 
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
@@ -119,10 +121,11 @@ def main_student():
             sm.set_timestamp()
             sm.set_coordinates()
             ###
-            actual_secret, seid, cid = sm.get_secret_and_seid()
+            actual_secret, seid, setimestamp, secoordinate, cid = sm.get_secret_and_seid()
+            
             if int(provided_secret) == int(actual_secret):
                 ### validation check
-                vc = validation_model.ValidationCheck(cid, sm)
+                vc = validation_model.ValidationCheck(setimestamp, secoordinate, sm)
                 if vc.validate():
                     sm.insert_attendance_record(seid)
                     valid = True

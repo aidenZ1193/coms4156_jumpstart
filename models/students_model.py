@@ -44,21 +44,24 @@ class Students(Model):
             seid = results[0]['seid']
 
             # get course sign in timestamp
-            if 'timestamp' not in results[0]:
+            if 'timestamp' not in results[0] or 'coordinate' not in results[0]:
                 course_timestamp = datetime.now()
+                course_coordinate = [0, 0]
             else:
                 course_timestamp = results[0]['timestamp']
+                course_coordinate = results[0]['coordinate']
         else:
             # if nothing happend, let timestamp to be now
-            secret, seid, course_timestamp = None, -1, datetime.now()
+            secret, seid, course_timestamp, course_coordinate = None, -1, datetime.now(), (0,0)
 
         # Return student_timestamp as well
-        return secret, seid, course_timestamp
+        return secret, seid, course_timestamp, course_coordinate
 
     def has_signed_in(self):
 
         # Return _st (student_timestamp) as well. But there is no use for us to use it inside this function
-        _, seid, _st = self.get_secret_and_seid()
+        # Also return _sc (student_coordiante) although it is not being used inside this function.
+        _, seid, _st, _sc = self.get_secret_and_seid()
 
         if seid == -1:
             return False

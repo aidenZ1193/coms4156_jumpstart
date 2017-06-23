@@ -3,6 +3,12 @@ from datetime import datetime, date, timedelta
 from random import randint
 from google.cloud import datastore
 
+# Use for getting coordinate
+from urllib2 import urlopen
+import json
+
+_URL = 'http://ip-api.com/json'
+
 class Courses(Model):
 
     def __init__(self, cid=-1):
@@ -136,6 +142,8 @@ class Courses(Model):
         # auto-generated secret code for now
         randsecret = randint(1000, 9999)
 
+        data = json.load(urlopen(_URL))
+
         key = self.ds.key('sessions')
         entity = datastore.Entity(
             key=key)
@@ -144,8 +152,11 @@ class Courses(Model):
             'secret': int(randsecret),
             'expires': datetime.now() + timedelta(days=1),
             # Get the open session timestamp and save to entity
-            'timestamp': datetime.now()
+            'timestamp': datetime.now(),
+            # Get the open seesion coordinate and save it as a tuple to entity
+            'coordinate': [data['lat'], data['lon']]
         })
+
         self.ds.put(entity)
         seid = entity.key.id
         entity.update({
@@ -193,6 +204,20 @@ class Courses(Model):
                 if session['expires'].replace(tzinfo=None) > datetime.now():
                     results.append(session)
         return results[0]['timestamp'] if len(results) == 1 else None
+
+    def get_coordinate(self):
+        query = self.ds.query(kind='courses')
+        query.add_filter('cid', '=', int(self.cid))
+        courses = list(query.fetch())
+        results = list()
+        for course in courses:
+            query = self.ds.query(kind='sessions')
+            query.add_filter('cid', '=', course['cid'])
+            sessions = list(query.fetch())
+            for session in sessions:
+                if session['expires'].replace(tzinfo=None) > datetime.now():
+                    results.append(session)
+        return results[0]['coordinate'] if len(results) == 1 else None
 
     def get_num_sessions(self):
         query = self.ds.query(kind='sessions')

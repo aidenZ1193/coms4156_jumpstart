@@ -15,6 +15,13 @@ from google.cloud import datastore
 
 # Will use datetime package for later use when getting student sign in timestamp
 from datetime import datetime, date, timedelta
+from urllib2 import urlopen
+import json
+
+from geopy.distance import great_circle
+
+
+_URL = "http://ip-api.com/json"
 
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
@@ -125,12 +132,20 @@ def main_student():
 
             provided_timestamp = datetime.now()
 
+            provided_coordinate_data = json.load(urlopen(_URL))
+            provided_coordinate = (provided_coordinate_data['lat'], provided_coordinate_data['lon'])
+            
             # actual_secret, and seid is the real secret code and real session id related to the course above.
-            actual_secret, seid, course_timestamp = sm.get_secret_and_seid()
+            actual_secret, seid, course_timestamp, course_coordinate = sm.get_secret_and_seid()
             if int(provided_secret) == int(actual_secret):
                 if (course_timestamp + timedelta(minutes=15)).replace(tzinfo=None) >= provided_timestamp:
-                    sm.insert_attendance_record(seid)
-                    valid = True
+                    distance = great_circle(provided_coordinate, tuple(course_coordinate)).meters
+
+                    if distance <= 25:
+                        sm.insert_attendance_record(seid)
+                        valid = True
+                    else: 
+                        False
                 else:
                     valid = False
             else:
@@ -246,6 +261,9 @@ def view_class():
         # Get class timestamp
         timestamp = cm.get_timestamp()
 
+        # Get class coordinate
+        coordinate = cm.get_coordinate()
+
         num_sessions = cm.get_num_sessions()
         students = cm.get_students()
         students_with_ar = []
@@ -261,6 +279,7 @@ def view_class():
                 cid=cid,
                 secret=secret,
                 timestamp=timestamp,
+                coordinate=coordinate,
                 course_name=course_name,
                 num_sessions=num_sessions,
                 uni=uni,

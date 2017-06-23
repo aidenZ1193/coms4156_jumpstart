@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python2.7
 
 import os
@@ -13,6 +12,9 @@ from flask import Flask, render_template, request, g
 from models import users_model, index_model, teachers_model, students_model, \
         courses_model, model
 from google.cloud import datastore
+
+# Will use datetime package for later use when getting student sign in timestamp
+from datetime import datetime, date, timedelta
 
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
@@ -117,11 +119,20 @@ def main_student():
 
     elif request.method == 'POST':
         if 'secret_code' in request.form.keys():
+
+            # Provided_secret is student's secret code input
             provided_secret = request.form['secret_code']
-            actual_secret, seid = sm.get_secret_and_seid()
+
+            provided_timestamp = datetime.now()
+
+            # actual_secret, and seid is the real secret code and real session id related to the course above.
+            actual_secret, seid, course_timestamp = sm.get_secret_and_seid()
             if int(provided_secret) == int(actual_secret):
-                sm.insert_attendance_record(seid)
-                valid = True
+                if (course_timestamp + timedelta(minutes=15)).replace(tzinfo=None) >= provided_timestamp:
+                    sm.insert_attendance_record(seid)
+                    valid = True
+                else:
+                    valid = False
             else:
                 valid = False
 
@@ -231,6 +242,10 @@ def view_class():
 
         course_name = cm.get_course_name()
         secret = cm.get_secret_code()
+
+        # Get class timestamp
+        timestamp = cm.get_timestamp()
+
         num_sessions = cm.get_num_sessions()
         students = cm.get_students()
         students_with_ar = []
@@ -245,6 +260,7 @@ def view_class():
                 'view_class.html',
                 cid=cid,
                 secret=secret,
+                timestamp=timestamp,
                 course_name=course_name,
                 num_sessions=num_sessions,
                 uni=uni,

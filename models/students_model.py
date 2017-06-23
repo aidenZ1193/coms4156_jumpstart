@@ -26,6 +26,7 @@ class Students(Model):
 
         return result
 
+    # Also have to change the function name as well.
     def get_secret_and_seid(self):
         query = self.ds.query(kind='enrolled_in')
         enrolled_in = list(query.fetch())
@@ -41,12 +42,23 @@ class Students(Model):
         if len(results) == 1:
             secret = results[0]['secret']
             seid = results[0]['seid']
+
+            # get course sign in timestamp
+            if 'timestamp' not in results[0]:
+                course_timestamp = datetime.now()
+            else:
+                course_timestamp = results[0]['timestamp']
         else:
-            secret, seid = None, -1
-        return secret, seid
+            # if nothing happend, let timestamp to be now
+            secret, seid, course_timestamp = None, -1, datetime.now()
+
+        # Return student_timestamp as well
+        return secret, seid, course_timestamp
 
     def has_signed_in(self):
-        _, seid = self.get_secret_and_seid()
+
+        # Return _st (student_timestamp) as well. But there is no use for us to use it inside this function
+        _, seid, _st = self.get_secret_and_seid()
 
         if seid == -1:
             return False

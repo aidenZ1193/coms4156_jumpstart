@@ -39,8 +39,14 @@ class Teachers(Model):
                 if session['expires'].replace(tzinfo=None) > datetime.now():
                     results.append(session)
             if len(results) == 1:
-                course['secret'] = sessions[0]['secret']
+                course['secret'] = sessions[-1]['secret']
 
+                # We get the timestamp of sessions and let store it to course timestamp as well. 
+                # for later use
+                if 'timestamp' not in sessions[-1]:
+                    course['timestamp'] = datetime.now()
+                else:
+                    course['timestamp'] = sessions[-1]['timestamp']
         # result = courses + sessions
         return courses
 

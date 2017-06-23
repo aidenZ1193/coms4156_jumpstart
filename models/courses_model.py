@@ -142,7 +142,9 @@ class Courses(Model):
         entity.update({
             'cid': int(self.cid),
             'secret': int(randsecret),
-            'expires': datetime.now() + timedelta(days=1)
+            'expires': datetime.now() + timedelta(days=1),
+            # Get the open session timestamp and save to entity
+            'timestamp': datetime.now()
         })
         self.ds.put(entity)
         seid = entity.key.id
@@ -177,6 +179,20 @@ class Courses(Model):
                 if session['expires'].replace(tzinfo=None) > datetime.now():
                     results.append(session)
         return results[0]['secret'] if len(results) == 1 else None
+
+    def get_timestamp(self):
+        query = self.ds.query(kind='courses')
+        query.add_filter('cid', '=', int(self.cid))
+        courses = list(query.fetch())
+        results = list()
+        for course in courses:
+            query = self.ds.query(kind='sessions')
+            query.add_filter('cid', '=', course['cid'])
+            sessions = list(query.fetch())
+            for session in sessions:
+                if session['expires'].replace(tzinfo=None) > datetime.now():
+                    results.append(session)
+        return results[0]['timestamp'] if len(results) == 1 else None
 
     def get_num_sessions(self):
         query = self.ds.query(kind='sessions')

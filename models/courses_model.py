@@ -3,10 +3,6 @@ from datetime import datetime, date, timedelta
 from random import randint
 from google.cloud import datastore
 
-import json                     # for getting coordinates
-from urllib2 import urlopen     # for open url to get address
-import pdb                      # debug only
-
 class Courses(Model):
 
     def __init__(self, cid=-1):
@@ -14,20 +10,6 @@ class Courses(Model):
         self.now = datetime.time(datetime.now())
         self.today = date.today()
         self.ds = self.get_client()
-
-        ## adding coordinates and sign-in time
-        self.timestamp = datetime.now()
-        self.lat = 0.0
-        self.lon = 0.0              # will modify it when get ip address in imhere view_class
-
-    ### getters
-    def get_coordinates(self):
-        #pdb.set_trace()
-        return [self.lat, self.lon]
-
-    def get_timestamp(self):
-        return self.timestamp
-    ###
 
     def get_course_name(self):
         query = self.ds.query(kind='courses')
@@ -153,26 +135,13 @@ class Courses(Model):
         '''
         # auto-generated secret code for now
         randsecret = randint(1000, 9999)
-        pdb.set_trace()
-
-        ### get coordinate
-        url = "http://ip-api.com/json"
-        data = json.load(urlopen(url))
-
-        self.lat = data['lat']
-        self.lon = data['lon']
-        self.timestamp = datetime.now()
-
 
         key = self.ds.key('sessions')
         entity = datastore.Entity(
             key=key)
         entity.update({
             'cid': int(self.cid),
-            #'secret': int(randsecret),    
-            'secret': randsecret,  
-            'coordinate': [self.lat, self.lon],           ### adding value here
-            'timestamp': datetime.now(),
+            'secret': int(randsecret),
             'expires': datetime.now() + timedelta(days=1)
         })
         self.ds.put(entity)

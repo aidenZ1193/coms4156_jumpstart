@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python2.7
 
 import os
@@ -8,12 +9,10 @@ import apiclient
 import flask
 
 from uuid import uuid4
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, g
 from models import users_model, index_model, teachers_model, students_model, \
-        courses_model, model, validation_model
+        courses_model, model
 from google.cloud import datastore
-
-import pdb
 
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
@@ -75,12 +74,14 @@ def switch_type():
     if request.form['type'] == 'teacher':
         if im.is_teacher():
             return flask.redirect(flask.url_for('main_teacher'))
-        return flask.redirect(flask.url_for('register'))
+        else:
+            return flask.redirect(flask.url_for('register'))
 
     elif request.form['type'] == 'student':
         if im.is_student():
             return flask.redirect(flask.url_for('main_student'))
-        return flask.redirect(flask.url_for('register'))
+        else:
+            return flask.redirect(flask.url_for('register'))
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -97,7 +98,8 @@ def login():
         return flask.redirect(flask.url_for('main_student'))
     elif im.is_teacher():
         return flask.redirect(flask.url_for('main_teacher'))
-    return render_template('login.html', not_registered=True)
+    else:
+        return render_template('login.html', not_registered=True)
 
 
 @app.route('/student/', methods=['GET', 'POST'])
@@ -116,23 +118,10 @@ def main_student():
     elif request.method == 'POST':
         if 'secret_code' in request.form.keys():
             provided_secret = request.form['secret_code']
-
-            ### set time and location
-            sm.set_timestamp()
-            sm.set_coordinates()
-
-            ###
-            actual_secret, seid, setimestamp, secoordinate, cid = sm.get_secret_and_seid()
-            
+            actual_secret, seid = sm.get_secret_and_seid()
             if int(provided_secret) == int(actual_secret):
-                ### validation check
-                vc = validation_model.ValidationCheck(setimestamp, secoordinate, sm)
-                if vc.validate():
-                    sm.insert_attendance_record(seid,sm.get_timestamp(), sm.get_coordinates())
-
-                    valid = True
-                else:
-                    valid = False
+                sm.insert_attendance_record(seid)
+                valid = True
             else:
                 valid = False
 
@@ -159,8 +148,7 @@ def main_teacher():
             cm.open_session()
 
     courses = tm.get_courses_with_session()
-    length_courses = len(courses)
-    empty = True if length_courses == 0 else False
+    empty = True if len(courses) == 0 else False
     context = dict(data=courses)
     return render_template('main_teacher.html', empty=empty, **context)
 
@@ -293,8 +281,11 @@ def register():
 
                 flask.session['is_student'] = True
                 return flask.redirect(flask.url_for('main_student'))
-           
-            return render_template('register.html', name=flask.session['google_user']['name'], invalid_uni=True)
+            else:
+                return render_template(
+                        'register.html',
+                        name=flask.session['google_user']['name'],
+                        invalid_uni=True)
 
         else:
             try:
@@ -306,7 +297,7 @@ def register():
                 })
                 ds.put(entity)
                 flask.session['is_teacher'] = True
-            except Exception:
+            except:
                 pass
             return flask.redirect(flask.url_for('main_teacher'))
 
@@ -322,33 +313,33 @@ def oauth2callback():
     if 'code' not in flask.request.args:
         auth_uri = flow.step1_get_authorize_url()
         return flask.redirect(auth_uri)
-    
-    auth_code = flask.request.args.get('code')
-    credentials = flow.step2_exchange(auth_code)
-    flask.session['credentials'] = credentials.to_json()
+    else:
+        auth_code = flask.request.args.get('code')
+        credentials = flow.step2_exchange(auth_code)
+        flask.session['credentials'] = credentials.to_json()
 
-    # use token to get user profile from google oauth api
-    http_auth = credentials.authorize(httplib2.Http())
-    userinfo_client = apiclient.discovery.build('oauth2', 'v2', http_auth)
-    user = userinfo_client.userinfo().v2().me().get().execute()
+        # use token to get user profile from google oauth api
+        http_auth = credentials.authorize(httplib2.Http())
+        userinfo_client = apiclient.discovery.build('oauth2', 'v2', http_auth)
+        user = userinfo_client.userinfo().v2().me().get().execute()
 
-    # TODO only allow columbia.edu emails
-    # if 'columbia.edu' not in user['email']:
-    #     return flask.redirect(flask.url_for('bademail'))
+        # TODO only allow columbia.edu emails
+        # if 'columbia.edu' not in user['email']:
+        #     return flask.redirect(flask.url_for('bademail'))
 
-    um = users_model.Users()
+        um = users_model.Users()
 
-    flask.session['google_user'] = user
-    flask.session['id'] = um.get_or_create_user(user)
+        flask.session['google_user'] = user
+        flask.session['id'] = um.get_or_create_user(user)
 
-    # now add is_student and is_teacher to flask.session
-    im = index_model.Index(flask.session['id'])
-    flask.session['is_student'] = True if im.is_student() else False
-    flask.session['is_teacher'] = True if im.is_teacher() else False
+        # now add is_student and is_teacher to flask.session
+        im = index_model.Index(flask.session['id'])
+        flask.session['is_student'] = True if im.is_student() else False
+        flask.session['is_teacher'] = True if im.is_teacher() else False
 
-    redirect = flask.session['redirect']
-    flask.session.pop('redirect', None)
-    return flask.redirect(redirect)
+        redirect = flask.session['redirect']
+        flask.session.pop('redirect', None)
+        return flask.redirect(redirect)
 
 
 @app.route('/oauth/logout', methods=['POST', 'GET'])

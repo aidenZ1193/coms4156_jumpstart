@@ -77,6 +77,7 @@ class Students(Model):
                 results = results + list(query.fetch())
             return True if len(results) == 1 else False
 
+<<<<<<< HEAD
     def get_attendance_record(self):
         _, seid, _st, _sc = self.get_secret_and_seid()
 
@@ -99,15 +100,22 @@ class Students(Model):
 
 
     def insert_attendance_record(self, seid, timestamp, coordinate):
+=======
+    def insert_attendance_record(self, seid):
+>>>>>>> b9c0e8e243df331689c8c6f1cdcf7cab09ed3a8d
         key = self.ds.key('attendance_records')
         entity = datastore.Entity(
             key=key)
         entity.update({
             'sid': self.sid,
+<<<<<<< HEAD
             'seid': int(seid),
             # Add timestamp and coordinate related with student id and session id
             'timestamp': timestamp,
             'coordinate':coordinate
+=======
+            'seid': int(seid)
+>>>>>>> b9c0e8e243df331689c8c6f1cdcf7cab09ed3a8d
         })
         self.ds.put(entity)
 

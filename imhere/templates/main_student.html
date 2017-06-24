@@ -113,10 +113,12 @@
                     <center style="height:50%;"><h4 style="padding: 25% 0 25% 0;margin:0;">{{n['name']}}</h4>
                     {% if valid %}
                         Successful sign-in! <br>
-                        Timestamp check pass <br>
-                        Coordinates check pass
+                        Time: {{ signin_timestamp }} <br>
+                        Coordinate: {{ signin_coordinate }}
                     {% elif signed_in %}
-                        You have already signed into the session!
+                        You have already signed into the session!<br>
+                        Timestamp:{{ record_timestamp }} <br>
+                        Coordinate:{{ record_coordinate }}
                     {% else %}
                     </center>
                     <form action="/student/" method="post" style="height: 40%; overflow: hidden;">

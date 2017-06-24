@@ -5,4 +5,3 @@ class Model:
 
     def get_client(self): 
         return datastore.Client('coms-4156')
-

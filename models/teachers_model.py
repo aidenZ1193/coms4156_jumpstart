@@ -35,12 +35,21 @@ class Teachers(Model):
             query = self.ds.query(kind='sessions')
             query.add_filter('cid', '=', course['cid'])
             sessions = list(query.fetch())
+
             for session in sessions:
                 if session['expires'].replace(tzinfo=None) > datetime.now():
                     results.append(session)
             if len(results) == 1:
-                course['secret'] = sessions[0]['secret']
+                course['secret'] = results[0]['secret']
 
+                # We get the timestamp of sessions and let store it to course timestamp as well. 
+                # for later use
+                if 'timestamp' not in results[0] or 'coordinate' not in results[0]:
+                    course['timestamp'] = datetime.now()
+                    course['coordinate'] = [0, 0]
+                else:
+                    course['timestamp'] = results[0]['timestamp']
+                    course['coordinate'] = results[0]['coordinate']
         # result = courses + sessions
         return courses
 

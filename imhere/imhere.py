@@ -19,6 +19,7 @@ from urllib2 import urlopen
 import json
 
 from geopy.distance import great_circle
+import pdb
 
 
 _URL = "http://ip-api.com/json"

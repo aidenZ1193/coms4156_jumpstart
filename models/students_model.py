@@ -1,6 +1,7 @@
 from model import Model
 from datetime import datetime, date
 from google.cloud import datastore
+import pdb
 
 class Students(Model):
 
@@ -18,7 +19,9 @@ class Students(Model):
         query = self.ds.query(kind='enrolled_in')
         query.add_filter('sid', '=', self.sid)
         enrolledCourses = list(query.fetch())
+
         result = list()
+        #pdb.set_trace()
         for enrolledCourse in enrolledCourses:
             query = self.ds.query(kind='courses')
             query.add_filter('cid', '=', enrolledCourse['cid'])

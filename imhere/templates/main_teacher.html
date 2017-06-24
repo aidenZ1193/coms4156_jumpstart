@@ -2,39 +2,148 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Teacher View</title>
+    <title>Student View - 10-98</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
-    .btn-link {
-        border:none;
-        outline:none;
-        background:none;
-        cursor:pointer;
-        color:#4863a8;
-        padding-top:1em;
-        text-decoration:underline;
-        font-family:inherit;
-        font-size:inherit;
-    }
+        body {
+            font-family: Arial;
+            padding-left: 10%;
+            padding-right: 10%;
+        }
+        h2 {
+            margin-top: 0;
+            margin-bottom:0;
+        }
+        .logout-button {
+            background-color:#92b5a3;
+            border:0 solid white;
+            border-radius: 5px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            text-align:center;
+            font-size:1em;
+            font-weight: bold;
+            color: beige;
+            cursor: pointer;
+        }
+        .logout-button {
+            width: 100px;
+        }
+
+        .logout-button:hover {
+            background-color:#6d887a;
+        }
+
+        .switch2button {
+            background-color:white;
+            border:2px solid #92b5a3;
+            border-radius: 5px;
+            width: 200px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            text-align:center;
+            font-size:1em;
+            color: #92b5a3;
+            cursor: pointer;
+        }
+
+        .switch2button:hover {
+            color: beige;
+            background-color:#6d887a;
+            border:2px solid #6d887a;
+        }
+
+        .heading {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+            margin-top: 5%;
+            margin-bottom: 2%;
+        }
+        .heading > div {
+            width: 30%;
+        }
+
+        .unopened_container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            padding-left: 15%;
+            padding-right: 15%;
+        }
+        .unopened_container > div {
+            display: inline-block;
+            width: 30%;
+            background: #bdb6d6;
+            height: auto;
+            margin: 5px 10px 5px 10px;
+            border-radius:20px;
+        }
+
+        .open-button {
+            background: #92b5a3;
+            border: 1px solid #92b5a3;
+            cursor: pointer;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            color:beige;
+            font-weight: bolder;
+            border-radius: 0 0 20px 20px;
+            height: 100%;
+        }
+
+        .open-button:hover{
+            background: #6d887a;
+            border: 1px solid #6d887a;
+        }
+        .btn-link {
+            border:none;
+            outline:none;
+            background:none;
+            cursor:pointer;
+            color:#4863a8;
+            padding-top:1em;
+            font-family:inherit;
+            font-size:inherit;
+        }
+        .btn-link:hover {
+            text-decoration:underline;
+        }
     </style>
 </head>
 
 <body>
-    <form action="/switch_type" method="POST">
-    <button name="type" value="student">Switch to student view</button>
-    </form>
-    
-    <form action="/oauth/logout" method="POST">
-    <button name="logout">Logout</button>
-    </form><br>
 
+    <div class="heading">
+        <div>
+        </div>
+        <div>
+            <center><h2>ImHere</h2></center>
+        </div>
+        <div>
+            <form action="/oauth/logout" method="POST">
+                <button name="logout" class="logout-button">LOG OUT</button>
+            </form>
+        </div>
+    </div>
     <center>
-    <h2>ImHere</h2>
+        <form action="/switch_type" method="POST">
+            <button name="type" value="student" class="switch2button">Switch To Student View</button>
+        </form>
+    </center>
 
-    <a href="/teacher/add_class">Add a Class</a>
-    {% if not empty %}
-        <a href="/teacher/remove_class">Remove a Class</a><br><br> 
-    {% endif %}
 
+    <br>
+    <div>
+        <a href="/teacher/add_class" style="margin-left: 15%;margin-right: 20px; width:-moz-fit-content;display: inline-block;text-decoration: none;color: #6d887a"><i style="margin-right: 5px;" class="fa fa-book" aria-hidden="true"></i>Add a Class</a>
+        {% if not empty %}
+            <a href="/teacher/remove_class" style="text-decoration: none;color:#bf4147;"><i class="fa fa-trash" style="margin-right: 5px;"></i>Remove a Class</a> 
+        {% endif %}
+    </div>
+    <br>
+    <div class="unopened_container">
     {% for n in data %}
         {% if n['active'] == 1 %}
 
@@ -57,19 +166,26 @@
             Coordinate:<br>
             {{n['coordinate']}}<br><br>
         {% elif n['active'] == 0 %}
-
-            <form method="POST" action="/teacher/view_class">
-            <button name="cid" value="{{n['cid']}}" class="btn-link"><h4>{{n['name']}}</h4></button></form>
-
-            <form method="POST" action="/teacher/">
-            <button name="open" value="{{n['cid']}}">Open Attendance Window
-            </button>
-            </form><br><br>
+            
+                <div>
+                    <div style="height:100%;overflow: hidden;">
+                        <center style="height:100%;">
+                            <form method="POST" action="/teacher/view_class" style="height: 50%;">
+                                <button name="cid" value="{{n['cid']}}" class="btn-link">
+                                    <h4 style="padding: 25% 0 25% 0;margin:0; text-decoration: none;color: black;">{{n['name']}}</h4>
+                                </button>
+                            </form>
+                            <form method="POST" action="/teacher/" style="height: 50%;">
+                                <button name="open" value="{{n['cid']}}" class="open-button">Open Attendance Window
+                                </button>
+                            </form>
+                        </center>
+                    </div>
+                </div>
 
         {% endif %}
     {% endfor %}
+    </div>
 
-
-    </center>
 </body>
 </html>

@@ -117,11 +117,15 @@ def main_student():
     courses = sm.get_courses()
     context = dict(data=courses)
     signed_in = True if sm.has_signed_in() else False
+    record_timestamp, record_coordinate = sm.get_attendance_record()
+
 
     if request.method == 'GET':
         return render_template(
                 'main_student.html',
                 signed_in=signed_in,
+                record_timestamp=record_timestamp, 
+                record_coordinate=record_coordinate,
                 **context)
 
     elif request.method == 'POST':
@@ -133,16 +137,16 @@ def main_student():
             provided_timestamp = datetime.now()
 
             provided_coordinate_data = json.load(urlopen(_URL))
-            provided_coordinate = (provided_coordinate_data['lat'], provided_coordinate_data['lon'])
+            provided_coordinate = [provided_coordinate_data['lat'], provided_coordinate_data['lon']]
             
             # actual_secret, and seid is the real secret code and real session id related to the course above.
             actual_secret, seid, course_timestamp, course_coordinate = sm.get_secret_and_seid()
             if int(provided_secret) == int(actual_secret):
                 if (course_timestamp + timedelta(minutes=15)).replace(tzinfo=None) >= provided_timestamp:
-                    distance = great_circle(provided_coordinate, tuple(course_coordinate)).meters
+                    distance = great_circle(tuple(provided_coordinate), tuple(course_coordinate)).meters
 
                     if distance <= 25:
-                        sm.insert_attendance_record(seid)
+                        sm.insert_attendance_record(seid, provided_timestamp, provided_coordinate)
                         valid = True
                     else: 
                         False
@@ -155,6 +159,8 @@ def main_student():
                     'main_student.html',
                     submitted=True,
                     valid=valid,
+                    signin_timestamp=provided_timestamp,
+                    signin_coordinate=provided_coordinate,
                     **context)
 
 

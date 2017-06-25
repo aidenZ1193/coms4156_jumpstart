@@ -25,26 +25,52 @@ STUDENT_ACCOUNT = {
 STUDENT_ACCOUNT_ID = 100
 
 class unit_tests(unittest.TestCase):
+
+	cid_1 = 0
+	cid_2 = 0
 	
 
-	def setUp(self):
+	# def setUp(self):
+	# 	imhere.app.testing = True
+	# 	imhere.app.secret_key = str(uuid.uuid4())
+	# 	self.app = imhere.app.test_client()
+
+	# 	teacher_instance = teachers_model.Teachers(TEACHER_ACCOUNT_ID)
+	# 	classname_1 = "COMS 4111"
+	# 	cid_1 = teacher_instance.add_course(classname_1)
+	# 	course_instance_1 = courses_model.Courses(cid_1)
+	# 	course_instance_1.add_student('ds3420')
+
+	# 	classname_2 = "COMS 4112"
+	# 	cid_2 = teacher_instance.add_course(classname_2)
+	# 	course_instance_2 = courses_model.Courses(cid_2)
+	# 	course_instance_2.add_student('ds3420')
+
+	def db(self):
+		imhere.app.secret_key = str(uuid.uuid4())
+
+	
+	def test_a_teacher(self):
+
+
 		imhere.app.testing = True
 		imhere.app.secret_key = str(uuid.uuid4())
 		self.app = imhere.app.test_client()
 
 		teacher_instance = teachers_model.Teachers(TEACHER_ACCOUNT_ID)
 		classname_1 = "COMS 4111"
-		self.cid_1 = teacher_instance.add_course(classname_1)
-		course_instance_1 = courses_model.Courses(self.cid_1)
+		self.__class__.cid_1 = teacher_instance.add_course(classname_1)
+		course_instance_1 = courses_model.Courses(self.__class__.cid_1)
 		course_instance_1.add_student('ds3420')
 
 		classname_2 = "COMS 4112"
-		self.cid_2 = teacher_instance.add_course(classname_2)
-		course_instance_2 = courses_model.Courses(self.cid_2)
+		self.__class__.cid_2 = teacher_instance.add_course(classname_2)
+
+		course_instance_2 = courses_model.Courses(self.__class__.cid_2)
 		course_instance_2.add_student('ds3420')
 
-	
-	def test_a_teacher(self):
+
+
 		with imhere.app.test_client() as t_t:
 			# log in with teacher account
 			with t_t.session_transaction() as session_teacher:
@@ -62,6 +88,7 @@ class unit_tests(unittest.TestCase):
 
 	# Add two classes and students
 	def test_b_teacher_add_and_remove_class(self):
+		imhere.app.secret_key = str(uuid.uuid4())
 		with imhere.app.test_client() as t_t:
 			rv = t_t.get("/teacher/add_class")
 			self.assertEqual(302, rv.status_code)
@@ -82,6 +109,8 @@ class unit_tests(unittest.TestCase):
 			self.assertIn("Add a Class", rv.data)
 			self.assertEqual(200, rv.status_code)
 
+			#pdb.set_trace()
+
 			data = {
 				'unis': 'xz2627',
 				'classname':'COMS 2732'
@@ -90,6 +119,8 @@ class unit_tests(unittest.TestCase):
 			self.assertIn("COMS 2738", rv.data)
 			self.assertIn("COMS 2732", rv.data)
 			self.assertEqual(200, rv.status_code)
+
+			#pdb.set_trace()
 
 			# INVALID UNIS
 			data = {
@@ -103,23 +134,36 @@ class unit_tests(unittest.TestCase):
 			# Remove class starts from here
 			coursename_2remove = "COMS 2738"
 
-	        query = t_t.client.query(kind='courses')
-	        query.add_filter('name', '=', coursename_2remove)
-	        courses_2remove = list(query.fetch())
-	        self.assertEqual(len(courses_2remove), 1)
-	        data = {'cid':courses_2remove[0]['cid']}
+			## get cid
+			query = "select cid from courses where name = 'COMS 2738'"
+        	cursor = self.db().execute(query)
+        	for item in cursor:
+        		cid = item[0]
+        	data = {'cid': cid}
+
+	        # query = t_t.session.query(kind='courses')
+	        # query.add_filter('name', '=', coursename_2remove)
+	        # courses_2remove = list(query.fetch())
+	        # self.assertEqual(len(courses_2remove), 1)
+	        # data = {'cid':courses_2remove[0]['cid']}
 
 	        rv = t_t.post("/teachet/remove_class", data=data, follow_redirects=True)
 	        self.assertIn("Remove Class", rv.data)
 	        self.assertNotIn("COMS 2738")	
 
-	        coursename_2remove = "COMS 2732"
+	        #coursename_2remove = "COMS 2732"
 
-	        query = t_t.client.query(kind='courses')
-	        query.add_filter('name', '=', coursename_2remove)
-	        courses_2remove = list(query.fetch())
-	        self.assertEqual(len(courses_2remove), 1)
-	        data = {'cid':courses_2remove[0]['cid']}
+	        query = "select cid from courses where name = 'COMS 2732'"
+        	cursor = db.execute(query)
+        	for item in cursor:
+        		cid = item[0]
+        	data = {'cid': cid}
+
+	        # query = t_t.session.query(kind='courses')
+	        # query.add_filter('name', '=', coursename_2remove)
+	        # courses_2remove = list(query.fetch())
+	        # self.assertEqual(len(courses_2remove), 1)
+	        # data = {'cid':courses_2remove[0]['cid']}
 
 	        rv = t_t.post("/teachet/remove_class", data=data, follow_redirects=True)
 	        self.assertIn("Remove Class", rv.data)
@@ -138,11 +182,18 @@ class unit_tests(unittest.TestCase):
 			self.assertIn('Open Attendance Window', rv.data)
        		self.assertEqual(200, rv.status_code)
 
+       		#pdb.set_trace()
+
+
        		data = {"open" : self.cid_2}
        		rv = t_t.post("/teacher/", data = data)
        		self.assertIn("Close Attendance Window", rv.data)
        		self.assertIn("Secret Code", rv.data)
 
+       		## check for validation information
+       		self.assertIn("Timestamp:", rv.data)
+       		self.assertIn("Coordinate:", rv.data)
+       		
        		data = {"close": self.cid_2}
        		rv = t_t.post("/teacher/", data=data)
        		self.assertIn("Open Attendance Window", rv.data)	
@@ -162,6 +213,8 @@ class unit_tests(unittest.TestCase):
 			self.assertIn("COMS 4111", rv.data)
 			self.assertIn("COMS 4112", rv.data)
 			self.assertEqual(200, rv.status_code)
+
+			#pdb.set_trace()
 
 			data = {'cid': self.cid_2}
 			#pdb.set_trace()
@@ -185,8 +238,8 @@ class unit_tests(unittest.TestCase):
 			rv = t_s.get('/student/')
 			self.assertIn("Student View", rv.data)
 
-			#course_1 = courses_model.Courses(self.cid_1)
-			#course_1.add_student("uu0000")
+			course_1 = courses_model.Courses(self.cid_1)
+			course_1.add_student("uu0000")
 
 			rv = t_s.get("/student/")
 			#pdb.set_trace()
@@ -227,13 +280,13 @@ class unit_tests(unittest.TestCase):
 			self.assertEqual(200, rv.status_code)
 
 			data = {'cid': self.cid_1}
-			pdb.set_trace()
+			#pdb.set_trace()
 			rv = t_t.post("/teacher/remove_class", data=data, follow_redirects=True)
 			#self.assertIn("Class List", rv.data)
 			self.assertIn("Add a Class", rv.data)
 			self.assertIn("Remove a Class", rv.data)
-			self.assertNotIn("COMS 4111", rv.data)
 			self.assertNotIn("COMS 4112", rv.data)
+			self.assertNotIn("COMS 4111", rv.data)
 			self.assertEqual(200, rv.status_code)
 
 

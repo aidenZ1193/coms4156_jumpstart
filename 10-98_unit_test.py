@@ -3,7 +3,7 @@ from google.cloud import datastore
 import uuid
 import flask
 
-from flask import g
+#from google.appengine.ext import db
 
 import imhere
 from models import model, users_model, index_model, teachers_model, students_model, courses_model
@@ -152,46 +152,51 @@ class unit_tests(unittest.TestCase):
 
 			## get cid
 
-		
 
+			# query = "select cid from courses where name = 'COMS 2738'"
+   #      	cursor = db.execute(query)
+   #      	for item in cursor:
+   #      		cid = item[0]
+   #      	data = {'cid': cid}
+   			datastore_client = datastore.Client()
+	        query = datastore_client.query(kind='courses')
+	        query.add_filter('name', '=', coursename_2remove)
+	        courses_2remove = list(query.fetch())
+	        pdb.set_trace()
+	        self.assertEqual(len(courses_2remove), 1)
+	        data = {'cid':courses_2remove[0]['cid']}
 
-
-
-			query = "select cid from courses where name = 'COMS 2738'"
-        	cursor = db.execute(query)
-        	for item in cursor:
-        		cid = item[0]
-        	data = {'cid': cid}
-
-	        # query = t_t.session.query(kind='courses')
-	        # query.add_filter('name', '=', coursename_2remove)
-	        # courses_2remove = list(query.fetch())
-	        # self.assertEqual(len(courses_2remove), 1)
-	        # data = {'cid':courses_2remove[0]['cid']}
-
-	        rv = t_t.post("/teachet/remove_class", data=data, follow_redirects=True)
-	        self.assertIn("Remove Class", rv.data)
-	        self.assertNotIn("COMS 2738")
+	        rv = t_t.post("/teacher/remove_class", data=data, follow_redirects=True)
+	        # Remove a Class is the title.
+	        self.assertIn("Remove a Class", rv.data)
+	        self.assertNotIn("COMS 2738",rv.data)
 
 	        
 	    	
 	      	#coursename_2remove = "COMS 2732"
 
-	        query = "select cid from courses where name = 'COMS 2732'"
-        	cursor = db.execute(query)
-        	for item in cursor:
-        		cid = item[0]
-        	data = {'cid': cid}
+	        # query = "select cid from courses where name = 'COMS 2732'"
+        	# cursor = db.execute(query)
+        	# for item in cursor:
+        	# 	cid = item[0]
+        	# data = {'cid': cid}
 
 	        # query = t_t.session.query(kind='courses')
 	        # query.add_filter('name', '=', coursename_2remove)
 	        # courses_2remove = list(query.fetch())
 	        # self.assertEqual(len(courses_2remove), 1)
-	        # data = {'cid':courses_2remove[0]['cid']}
+	        # data = {'cid':courses_2remove[0]['cid']}\
+	        self.assertIn("COMS 2732", rv.data)
+	        coursename_2remove = "COMS 2732"
 
-	        rv = t_t.post("/teachet/remove_class", data=data, follow_redirects=True)
-	        self.assertIn("Remove Class", rv.data)
-	        self.assertNotIn("COMS 2732")	
+	        query = datastore_client.query(kind='courses')
+	        query.add_filter('name', '=', coursename_2remove)
+	        courses_2remove = list(query.fetch())
+	        data = {'cid':courses_2remove[0]['cid']}
+
+	        rv = t_t.post("/teacher/remove_class", data=data, follow_redirects=True)
+	        self.assertIn("Remove a Class", rv.data)
+	        self.assertNotIn("COMS 2732", rv.data)	 
 
 	        t_t.get('/oauth/logout')            
         	rv = t_t.get('/teacher/')
@@ -219,12 +224,13 @@ class unit_tests(unittest.TestCase):
 	       	self.assertIn("Close Attendance Window", rv.data)
 	       	self.assertIn("Secret Code", rv.data)
 
-	       		## check for validation information
+	       	## check for validation information
 	       	self.assertIn("Timestamp:", rv.data)
 	       	self.assertIn("Coordinate:", rv.data)
 	       		
 	       	data = {"close": self.cid_2}
 	       	rv = t_t.post("/teacher/", data=data)
+	       	pdb.set_trace()
 	       	self.assertIn("Open Attendance Window", rv.data)	
 	       	self.assertNotIn("Secret Code", rv.data)	
 
@@ -286,7 +292,7 @@ class unit_tests(unittest.TestCase):
 
 			rv = t_s.get("/student/")
 			self.assertIn("COMS 4111", rv.data)
-			self.assertIn("No sign-in window", rv.data)
+			self.assertIn("No Sign-in Window Available!", rv.data)
 
 			# Open Sign-in & get secret code
 			real_secret_code = course_1.open_session()
@@ -303,10 +309,14 @@ class unit_tests(unittest.TestCase):
 			self.assertEqual(200, rv.status_code)
 			self.assertIn("Successful sign-in!", rv.data)
 
-				# Check timstamp & coordiantes
+			# Check timstamp & coordiantes
 			self.assertIn("Time", rv.data)
 			self.assertIn("Coordinate", rv.data)
-				
+
+			t_s.get('/oauth/logout')            
+        	rv = t_s.get('/student/')
+        	self.assertEqual(302, rv.status_code)
+			
 
 
 	def test_f_clear_classes(self):
@@ -327,10 +337,15 @@ class unit_tests(unittest.TestCase):
 			rv = t_t.post("/teacher/remove_class", data=data, follow_redirects=True)
 			#self.assertIn("Class List", rv.data)
 			self.assertIn("Add a Class", rv.data)
-			self.assertIn("Remove a Class", rv.data)
+			self.assertNotIn("Remove Class", rv.data)
 			self.assertNotIn("COMS 4112", rv.data)
 			self.assertNotIn("COMS 4111", rv.data)
 			self.assertEqual(200, rv.status_code)
+
+			t_t.get('/oauth/logout')            
+        	rv = t_t.get('/teacher/')
+        	self.assertEqual(302, rv.status_code)
+
 
 
 if __name__ == '__main__':

@@ -7,100 +7,205 @@
         .beta table, .beta td, .beta th {
             border: 1px solid black;
         }
+        body {
+            font-family: Arial;
+            padding-left: 10%;
+            padding-right: 10%;
+        }
+        h2, h4, h3 {
+            margin-top: 0;
+            margin-bottom:0;
+        }
+        .heading {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+            margin-top: 5%;
+            margin-bottom: 2%;
+        }
+        .heading > div {
+            width: 30%;
+        }
+
+        .back-button {
+            border: 0 solid white;
+            border-radius: 5px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            text-align: center;
+            font-size: 1em;
+            font-weight: bold;
+            color: #92b5a3;
+            cursor: pointer;
+            width: 100px;
+            float: right;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            text-decoration: #92b5a3;
+        }
+
+        .remove-button, .openclose-button, .add-button {
+            cursor: pointer;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            color:beige;
+            font-weight: bolder;
+            border-radius: 0 0 20px 20px;
+            height: 100%;
+        }
+        .openclose-button, .add-button {
+            background: #92b5a3;
+            border: 1px solid #92b5a3;
+        }
+        .remove-button {
+            background: #bf4147;
+            border: 1px solid #bf4147;
+        }
+        .openclose-button:hover, .add-button:hover{
+            background: #6d887a;
+            border: 1px solid #6d887a;
+        }
+        .remove-button:hover{
+            background: #852d31;
+            border: 1px solid #852d31;
+        }
+        .remove-button, .add-button {
+            border-radius: 5px;
+            margin: 20%;
+        }
+        .course-container{
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            padding-left: 15%;
+            padding-right: 15%;
+        }
     </style>
 </head>
 
 <body>
+
+    <div class="heading">
+        <div>
+            <a href="/teacher/" class="back-button">< BACK</a>
+        </div>
+        <div>
+            <center><h2>ImHere</h2></center>
+        </div>
+        <div>
+        </div>
+    </div>
+
     <center>
+        <div class="course-container">
+            <div style="display: inline-block;
+                width: 30%;
+                background: #bdb6d6;
+                height: auto;
+                margin: 5px 10px 5px 10px;
+                border-radius:20px;">
+                <div style="height: 100%; overflow: hidden;">
+                    <center style="height: 100%;">
 
-    <h2>ImHere</h2><br>
+                        <h4 style="padding: 25% 0 25% 0;margin:0; text-decoration: none;color: black;">{{course_name}}</h4>
+                        {% if secret %}
+                            <div style="background-color: beige;text-align: left; padding:5px;">
+                                <strong>Secret Code:</strong>{{secret}}<br>
+                                <strong>Timestamp:</strong><br>{{timestamp}}<br>
+                                <strong>Coordinate:</strong><br>{{coordinate}}
+                            </div>
+                            <form method="POST" action="/teacher/view_class">
+                                <button name="close" value="{{cid}}" class="openclose-button">Close Attendance Window
+                                </button>
+                            </form>
+                        {% else %}
+                            <form method="POST" action="/teacher/view_class" style="height: 40%;">
+                                <button name="open" value="{{cid}}" class="openclose-button">Open Attendance Window
+                                </button>
+                            </form><br>
+                        {% endif %}
+                    </center>
+                </div>
+            </div>
+            <div style="display: inline-block;
+                width: 30%;
+                background: #c8dad1;
+                height: auto;
+                margin: 5px 10px 5px 10px;
+                border-radius:20px;">
+                <div style="height: 100%; overflow: hidden;">
+                    <center style="height: 100%;">
+                        <h4 style="padding: 25% 0 25% 0;margin:0; text-decoration: none;color: black;">Add Student</h4>
+                        <form method="POST" action="/teacher/view_class">
+                            <input type="text" required name="add_student" placeholder="uni" style="width: -moz-available;border: 0;margin: 5px;padding: 5px;">
+                            <br>
+                            <button name="cid" value={{cid}} class="add-button">ADD</button>
+                        </form>
+                    </center>
+                </div>
+            </div>
+            {% if students %}
+            <div style="display: inline-block;
+                width: 30%;
+                background: #e5b3b5;
+                height: auto;
+                margin: 5px 10px 5px 10px;
+                border-radius:20px;">
+                <div style="height: 100%; overflow: hidden;">
+                    <center style="height: 100%;">
+                        <h4 style="padding: 25% 0 25% 0;margin:0; text-decoration: none;color: black;">Delete Student</h4>
+                        <form method="POST" action="/teacher/view_class">
+                            <input type="text" required name="remove_student" placeholder="uni" style="width: -moz-available;border: 0;margin: 5px;padding: 5px;">
+                            <br>
+                            <button name="cid" value={{cid}} class="remove-button">REMOVE</button>
+                        </form>
+                    </center>
+                </div>
+            </div>
+            {% endif %}
+            
+        </div>
 
-    <h3>{{course_name}}</h3>
-
-    {% if secret %}
-        <form method="POST" action="/teacher/view_class">
-        <button name="close" value="{{cid}}">Close Attendance Window
-        </button>
-        </form>
-
-        Secret Code:<br>
-        {{secret}}<br>
-
-    {% else %}
-        <form method="POST" action="/teacher/view_class">
-        <button name="open" value="{{cid}}">Open Attendance Window
-        </button>
-        </form><br>
-
-    {% endif %}
-
-    <table cellspacing="35">
-    <thead>
-    <tr>
-
-    <th>
-    Add Student to Class:<br>
-    <form method="POST" action="/teacher/view_class">
-        <input type="text" required name="add_student" placeholder="uni">
-        <br>
-        <button name="cid" value={{cid}}>add</button>
-    </form>
-    </th>
-
-    {% if students %}
-    <th>
-    Del Student from Class:<br>
-    <form method="POST" action="/teacher/view_class">
-        <input type="text" required name="remove_student" placeholder="uni">
-        <br>
-        <button name="cid" value={{cid}}>remove</button>
-    </form>
-    </th>
-    {% endif %}
-
-    </tr>
-    </thead>
-    </table>
-
-    {% if res == -1 %}
-        <font color="red">'{{uni}}' is an invalid uni</font>
-    {% elif res == -2 %}
-        <font color="red">'{{uni}}' is already in the class</font>
-    {% elif res == -3 %}
-        <font color="red">'{{uni}}' is not in the class to begin with</font>
-    {% endif %}
-
-    <br><br>
-
-    {% if students %}
-        {% if secret %}
-        <font color="red">attendance may be inaccurate due to the open sign-in window</font>
+        {% if res == -1 %}
+            <font color="red">'{{uni}}' is an invalid uni</font>
+        {% elif res == -2 %}
+            <font color="red">'{{uni}}' is already in the class</font>
+        {% elif res == -3 %}
+            <font color="red">'{{uni}}' is not in the class to begin with</font>
         {% endif %}
-    <table cellspacing="5" class="beta" style="border-collapse:collapse">
-    <thead>
-    <tr>
-        <th>Name</th>
-        <th>E-Mail</th>
-        <th>UNI</th>
-        <th>Attendance</th>
-    </tr>
-    </thead>
 
-    <!-- students is a list == [<RowProxy>, UNI, num_attendance_records] -->
-    {% for student in students %}
-    <tr>
-        <td align="center">{{student[0]['name']}}</td>
-        <td align="center">{{student[0]['email']}}</td>
-        <td align="center">{{student[1]}}</td>
-        <td align="center">{{student[2]}}/{{num_sessions}}</td>
-    </tr>
-    {% endfor %}
-    </table><br><br>
-    {% endif %}
+        <br><br>
 
+        {% if students %}
+            {% if secret %}
+            <font color="red">attendance may be inaccurate due to the open sign-in window</font>
+            {% endif %}
+        <table cellspacing="5" class="beta" style="border-collapse:collapse">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>E-Mail</th>
+            <th>UNI</th>
+            <th>Attendance</th>
+        </tr>
+        </thead>
 
+        <!-- students is a list == [<RowProxy>, UNI, num_attendance_records] -->
+        {% for student in students %}
+        <tr>
+            <td align="center">{{student[0]['name']}}</td>
+            <td align="center">{{student[0]['email']}}</td>
+            <td align="center">{{student[1]}}</td>
+            <td align="center">{{student[2]}}/{{num_sessions}}</td>
+        </tr>
+        {% endfor %}
+        </table><br><br>
+        {% endif %}
 
-    <a href="/teacher/">Home</a>
     </center>
 </body>
 </html>

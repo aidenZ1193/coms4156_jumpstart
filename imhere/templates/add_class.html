@@ -3,25 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <title>Add a Class</title>
+    <style type="text/css">
+        body {
+            font-family: Arial;
+            padding-left: 10%;
+            padding-right: 10%;
+        }
+        h2, h4, h3 {
+            margin-top: 0;
+            margin-bottom:0;
+        }
+        .heading {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+            margin-top: 5%;
+            margin-bottom: 2%;
+        }
+        .heading > div {
+            width: 100%;
+        }
+        .create-button{
+            background-color:#92b5a3;
+            border:0 solid white;
+            border-radius: 5px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            text-align:center;
+            font-size:1em;
+            font-weight: bold;
+            color: beige;
+            cursor: pointer;
+            width: -moz-available;
+        }
+        .create-button:hover {
+            background-color:#6d887a;
+        }
+    </style>
 </head>
 
 <body>
-    <center>
-    <h2>ImHere</h2><br>
+    <div class="heading">
+        <div>
+            <center><h2>ImHere</h2></center>
+        </div>
+    </div>
+    <div style="margin-left: 15%;margin-right: 15%;">
+        <br>
+        <center><h3>Create a Class</h3></center>
+        <br>
+        <form method="POST" action="/teacher/add_class">
+            <h4>Class Name</h4>
+            <br>
+            <input type="text" name="classname" required style="width: -moz-available;">
 
-    <h4>Create a Class</h4>
-    <form method="POST" action="/teacher/add_class">
-        Name: <input type="text" name="classname" required><br><br>
+            <br><br><br><br>
 
-        <h4>Student Unis</h4>
-        <textarea rows="6" cols="50" placeholder="Please enter one uni per line" name="unis"></textarea><br>
-        <button>Create Class</button>
-    </form><br>
+            <h4>Student Unis</h4>
+            <br>
+            <textarea rows="6" cols="50" placeholder="Please enter one uni per line" name="unis" style="width: -moz-available;"></textarea><br><br>
+            <button class="create-button">Create Class</button>
+        </form>
 
-    {% if invalid_uni %}
-    <font color="red">Invalid UNI's entered, please recreate the class</font> 
-    {% endif %}
+        <br>
 
-    </center>
+        {% if invalid_uni %}
+            <font color="red">Invalid UNI's entered, please recreate the class</font> 
+        {% endif %}
+        </center>
+    </div>
 </body>
 </html>

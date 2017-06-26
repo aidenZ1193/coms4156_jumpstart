@@ -151,7 +151,7 @@ def main_student():
                         sm.insert_attendance_record(seid, provided_timestamp, provided_coordinate)
                         valid = True
                     else: 
-                        False
+                        valid = False
                 else:
                     valid = False
             else:

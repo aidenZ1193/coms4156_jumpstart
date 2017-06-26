@@ -1,0 +1,6 @@
+0000000000000000000000000000000000000000 0698dd2ee45ea154efc435f0a27ccadce28f2f3c Dailin Shen <ds3420@columbia.edu> 1498270926 -0400	reset: moving to origin/master
+0698dd2ee45ea154efc435f0a27ccadce28f2f3c c48f60bab417aede0891dafc09d4037c56b65339 Dailin Shen <ds3420@columbia.edu> 1498271145 -0400	commit: Show studentsign-in timestamp and coordinate on the screen.
+c48f60bab417aede0891dafc09d4037c56b65339 c48f60bab417aede0891dafc09d4037c56b65339 Dailin Shen <ds3420@columbia.edu> 1498271170 -0400	checkout: moving from master to development
+c48f60bab417aede0891dafc09d4037c56b65339 4a200c8ece5a842d7288c0c44035e529aef506ba Dailin Shen <ds3420@columbia.edu> 1498271595 -0400	commit (merge): Partial Completed.
+4a200c8ece5a842d7288c0c44035e529aef506ba 197e61450a1ffe4080eb0b171b4fd0992cbabce2 Dailin Shen <ds3420@columbia.edu> 1498272588 -0400	commit: Completed. Need UI part and tests.
+197e61450a1ffe4080eb0b171b4fd0992cbabce2 99b0b18e62535fb93d4539cafdb36b6308b98fe5 Dailin Shen <ds3420@columbia.edu> 1498346659 -0400	commit: Partially styled teacher page.

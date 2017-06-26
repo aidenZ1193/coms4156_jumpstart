@@ -3,15 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <title>Remove a Class</title>
+    <style type="text/css">
+        body {
+            font-family: Arial;
+            padding-left: 10%;
+            padding-right: 10%;
+        }
+        h2, h4, h3 {
+            margin-top: 0;
+            margin-bottom:0;
+        }
+        .heading {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+            margin-top: 5%;
+            margin-bottom: 2%;
+        }
+        .heading > div {
+            width: 100%;
+        }
+
+        .remove-button{
+            background-color: white;
+            border: 2px solid #bf4147;
+            color: #bf4147;
+            border-radius: 5px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            text-align:center;
+            font-size:1em;
+            font-weight: bold;
+            cursor: pointer;
+            width: -moz-fit-content;
+        }
+        .remove-button:hover {
+            background-color:#bf4147;
+            color: beige;
+        }
+    </style>
 </head>
 <body>
 <center>
+    <div class="heading">
+        <div>
+            <center><h2>ImHere</h2></center>
+        </div>
+    </div>
 
-    <h2>ImHere</h2><br>
-
-    <h4>Class List</h4>
-
-    <table cellspacing="10">
+    <div style="margin-left: 15%;margin-right: 15%;">
+        <br>
+        <center><h3>Class List</h3></center>
+        <br>
+        <table cellspacing="10">
 
         {% for n in data %}
         <tr>
@@ -19,13 +64,14 @@
             <td>|</td>
             <td>
                 <form method="POST" action="/teacher/remove_class">
-                    <button name="cid" value="{{n['cid']}}">Remove Class
+                    <button name="cid" value="{{n['cid']}}" class="remove-button">Remove Class
                     </button>
                 </form>
             </td>
         </tr>
         {% endfor %}
     </table>
+    </div>
 
 </center>
 </body>

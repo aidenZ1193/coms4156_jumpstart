@@ -25,8 +25,6 @@
             font-weight: bold;
             color: beige;
             cursor: pointer;
-        }
-        .logout-button {
             width: 100px;
         }
 
@@ -82,7 +80,7 @@
             border-radius:20px;
         }
 
-        .open-button {
+        .openclose-button {
             background: #92b5a3;
             border: 1px solid #92b5a3;
             cursor: pointer;
@@ -94,7 +92,7 @@
             height: 100%;
         }
 
-        .open-button:hover{
+        .openclose-button:hover{
             background: #6d887a;
             border: 1px solid #6d887a;
         }
@@ -146,42 +144,47 @@
     <div class="unopened_container">
     {% for n in data %}
         {% if n['active'] == 1 %}
+            <div>
+                <div style="height: 100%; overflow: hidden;">
+                    <center style="height: 100%;">
+                        <form method="POST" action="/teacher/view_class">
+                            <button name="cid" value="{{n['cid']}}" class="btn-link">
+                                <h4 style="padding: 25% 0 25% 0;margin:0; text-decoration: none;color: black;">{{n['name']}}</h4>
+                            </button>
+                        </form>
+                        <div style="background-color: beige;text-align: left; padding:5px;">
+                            <strong>Secret Code:</strong>
+                            {{n['secret']}}<br>
+                            <!-- Show timestamp on the screen -->
+                            <strong>Timestamp:</strong><br>
+                            {{n['timestamp']}}<br>
 
-            <form method="POST" action="/teacher/view_class">
-            <button name="cid" value="{{n['cid']}}" class="btn-link"><h4>{{n['name']}}</h4>
-            </button>
-            </form>
-
-            <form method="POST" action="/teacher/">
-            <button name="close" value="{{n['cid']}}">Close Attendance Window
-            </button>
-            </form><br>
-
-            Secret Code:<br>
-            {{n['secret']}}<br><br>
-            <!-- Show timestamp on the screen -->
-            Timestamp:<br>
-            {{n['timestamp']}}<br><br>
-
-            Coordinate:<br>
-            {{n['coordinate']}}<br><br>
-        {% elif n['active'] == 0 %}
-            
-                <div>
-                    <div style="height:100%;overflow: hidden;">
-                        <center style="height:100%;">
-                            <form method="POST" action="/teacher/view_class" style="height: 50%;">
-                                <button name="cid" value="{{n['cid']}}" class="btn-link">
-                                    <h4 style="padding: 25% 0 25% 0;margin:0; text-decoration: none;color: black;">{{n['name']}}</h4>
-                                </button>
-                            </form>
-                            <form method="POST" action="/teacher/" style="height: 50%;">
-                                <button name="open" value="{{n['cid']}}" class="open-button">Open Attendance Window
-                                </button>
-                            </form>
-                        </center>
-                    </div>
+                            <strong>Coordinate:</strong><br>
+                            {{n['coordinate']}}
+                        </div>
+                        <form method="POST" action="/teacher/">
+                            <button name="close" value="{{n['cid']}}" class="openclose-button">Close Attendance Window
+                            </button>
+                        </form>
+                    </center>
                 </div>
+            </div>
+        {% elif n['active'] == 0 %}
+            <div>
+                <div style="height:100%;overflow: hidden;">
+                    <center style="height:100%;">
+                        <form method="POST" action="/teacher/view_class" style="height: 50%;">
+                            <button name="cid" value="{{n['cid']}}" class="btn-link">
+                                <h4 style="padding: 25% 0 25% 0;margin:0; text-decoration: none;color: black;">{{n['name']}}</h4>
+                            </button>
+                        </form>
+                        <form method="POST" action="/teacher/" style="height: 50%;">
+                            <button name="open" value="{{n['cid']}}" class="openclose-button">Open Attendance Window
+                            </button>
+                        </form>
+                    </center>
+                </div>
+            </div>
 
         {% endif %}
     {% endfor %}

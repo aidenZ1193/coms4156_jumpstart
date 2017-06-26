@@ -64,7 +64,7 @@
             width: 30%;
         }
 
-        .sign-in-container {
+        .sign-in-container, .no-signedin-container {
             display: flex;
             flex-direction: row;
             flex-wrap: wrap;
@@ -72,7 +72,7 @@
             padding-left: 15%;
             padding-right: 15%;
         }
-        .sign-in-container > div {
+        .sign-in-container > div, .no-signedin-container > div {
             display: inline-block;
             width: 30%;
             background: #bdb6d6;
@@ -120,44 +120,43 @@
                         Timestamp:{{ record_timestamp }} <br>
                         Coordinate:{{ record_coordinate }}
                     {% else %}
-                    </center>
-                    <form action="/student/" method="post" style="height: 40%; overflow: hidden;">
+                        <form action="/student/" method="post" style="height: 40%; overflow: hidden;">
 
-                        <center>Sign in now!</center>
-                        <br>
-                        <div style="display:flex; border:2px solid #92b5a3;">
-                            <input style="width: 65%;border: 0 solid white;padding:0;" type="text" name="secret_code" placeholder="Secret Code">
+                            <center>Sign in now!</center>
+                            <br>
+                            <div style="display:flex; border:2px solid #92b5a3;">
+                                <input style="width: 65%;border: 0 solid white;padding:0;" type="text" name="secret_code" placeholder="Secret Code">
 
-                            <input type="submit" value="SUBMIT" class="submit-button">
-                        </div>
+                                <input type="submit" value="SUBMIT" class="submit-button">
+                            </div>
 
-                    </form>
+                        </form>
 
-                    {% if submitted %}
-                        {% if not valid %}
-                            <center style="height:10%;"><font color="red">Invalid Secret Code</font></center>
+                        {% if submitted %}
+                            {% if not valid %}
+                                <center style="height:10%;"><font color="red">Invalid Secret Code</font></center>
+                            {% endif %}
                         {% endif %}
                     {% endif %}
+                    </center>
                 </div>
             </div>
-            {% endif %}
-
+        <br>
+        {% elif n['active'] == 0 %}
+<!--         {% if n['active'] == 0 %} -->
+            <div>
+                <div style="height:100%;overflow: hidden;">
+                    <center style="height:50%;"><h4 style="padding: 25% 0 25% 0;margin:0;">{{n['name']}}</h4>
+                    <p style="margin:10px;padding: 10px;">No Sign-in Window Available!</p>
+                    </center>
+                </div>
+            </div>
+  <!--       {% endif %} -->
         {% endif %}
+        <br>
     {% endfor %}
     </div>
     <br>
-    <div>
-    <!-- then show classes that are not ongoing at this time/date -->
-    {% for n in data %}
-        {% if n['active'] == 0 %}
-
-            <h4>{{n['name']}}</h4>
-            No sign-in window available!
-            <br>
-
-        {% endif %}
-    {% endfor %}
-
-    </div>
+    
 </body>
 </html>

@@ -58,7 +58,7 @@ class Courses(Model):
                 'cid': int(self.cid)
             })
             self.ds.put(entity)
-            return 0
+            return sid
 
         else:
             # invalid uni

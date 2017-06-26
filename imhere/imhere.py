@@ -125,6 +125,7 @@ def main_student():
         return render_template(
                 'main_student.html',
                 signed_in=signed_in,
+                uni=sm.get_uni(),
                 record_timestamp=record_timestamp, 
                 record_coordinate=record_coordinate,
                 **context)

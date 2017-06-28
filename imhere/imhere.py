@@ -143,19 +143,25 @@ def main_student():
             
             # actual_secret, and seid is the real secret code and real session id related to the course above.
             actual_secret, seid, course_timestamp, course_coordinate = sm.get_secret_and_seid()
+            
+            # valid = 1     true valid
+            # valid = 2     out of distance range
+            # valid = 3     out of timestamp range
+            # valid = 4     invalid secret code
+
             if int(provided_secret) == int(actual_secret):
                 if (course_timestamp + timedelta(minutes=15)).replace(tzinfo=None) >= provided_timestamp:
                     distance = great_circle(tuple(provided_coordinate), tuple(course_coordinate)).meters
 
                     if distance <= 25:
                         sm.insert_attendance_record(seid, provided_timestamp, provided_coordinate)
-                        valid = True
+                        valid = 1
                     else: 
-                        valid = False
+                        valid = 2
                 else:
-                    valid = False
+                    valid = 3
             else:
-                valid = False
+                valid = 4
 
             return render_template(
                     'main_student.html',

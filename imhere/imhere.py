@@ -162,7 +162,7 @@ def main_student():
                     submitted=True,
                     valid=valid,
                     signin_timestamp=provided_timestamp,
-                    signin_coordinate=provided_coordinate,
+                    signin_coordinate=request.remote_addr,
                     **context)
 
 

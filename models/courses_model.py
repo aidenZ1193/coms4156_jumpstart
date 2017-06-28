@@ -3,11 +3,16 @@ from datetime import datetime, date, timedelta
 from random import randint
 from google.cloud import datastore
 
+from flask import request
+
 # Use for getting coordinate
 from urllib2 import urlopen
 import json
 
+
 _URL = 'http://ip-api.com/json'
+
+
 
 class Courses(Model):
 
@@ -156,6 +161,7 @@ class Courses(Model):
             # Get the open seesion coordinate and save it as a tuple to entity
             'coordinate': [data['lat'], data['lon']]
         })
+
 
         self.ds.put(entity)
         seid = entity.key.id

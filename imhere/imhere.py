@@ -127,7 +127,7 @@ def main_student():
                 'main_student.html',
                 signed_in=signed_in,
                 uni=sm.get_uni(),
-                record_timestamp=record_timestamp, 
+                record_timestamp=record_timestamp+timedelta(hours=-4), 
                 record_coordinate=record_coordinate,
                 **context)
 
@@ -174,7 +174,7 @@ def main_student():
                     valid=valid,
                     uni=sm.get_uni(),
                     actual_secret=actual_secret,
-                    signin_timestamp=provided_timestamp,
+                    signin_timestamp=provided_timestamp+timedelta(hours=-4),
                     signin_coordinate=provided_coordinate,
                     **context)
 
@@ -197,7 +197,11 @@ def main_teacher():
     courses = tm.get_courses_with_session()
     empty = True if len(courses) == 0 else False
     context = dict(data=courses)
-    return render_template('main_teacher.html', empty=empty, **context)
+
+    # NEW
+    return render_template('main_teacher.html', empty=empty, **context, new_timestamp=context['timestamp']+timedelta(hours=-4))
+
+    #return render_template('main_teacher.html', empty=empty, **context)
 
 
 @app.route('/teacher/add_class', methods=['POST', 'GET'])

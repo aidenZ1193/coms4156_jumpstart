@@ -47,6 +47,7 @@ class Teachers(Model):
                 # We get the timestamp of sessions and let store it to course timestamp as well. 
                 # for later use
                 if 'timestamp' not in results[0] or 'coordinate' not in results[0]:
+                    tz = pytz.timezone('America/New_York')
                     time = datetime.now()
                     pytz.utc.localize(time, is_dst=None).astimezone(tz)
                     course['timestamp'] = time

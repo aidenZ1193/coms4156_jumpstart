@@ -149,7 +149,7 @@ class Courses(Model):
         randsecret = randint(1000, 9999)
 
         data = json.load(urlopen(_URL + "/" + str(request.remote_addr)))
-        tz pytz.timezone('America/New_York')
+        tz = pytz.timezone('America/New_York')
         time = datetime.now()
         pytz.utc.localize(time, is_dst=None).astimezone(tz)
 

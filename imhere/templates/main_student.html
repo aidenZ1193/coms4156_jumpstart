@@ -110,7 +110,7 @@
         {% if n['active'] == 1 %}
             <div>
                 <div style="height:100%;overflow: hidden;">
-                    <center style="height:50%;"><h4 style="padding: 25% 0 25% 0;margin:0;">{{n['name']}}</h4>
+                    <center style="height:50%;"><h4 style="padding: 10% 0 10% 0;margin:0;">{{n['name']}}</h4>
                     {% if valid == 1 %}
                         Successful sign-in! <br>
                         Time: {{ signin_timestamp }} <br>
@@ -120,7 +120,7 @@
                         Timestamp:{{ record_timestamp }} <br>
                         Coordinate:{{ record_coordinate }}
                     {% else %}
-                        <form action="/student/" method="post" style="height: 40%; overflow: hidden;">
+                        <form action="/student/" method="post" style="height: 100%; overflow: hidden;">
 
                             <center>Sign in now!</center>
                             <br>

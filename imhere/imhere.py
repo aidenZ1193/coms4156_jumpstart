@@ -18,6 +18,8 @@ from datetime import datetime, date, timedelta
 from urllib2 import urlopen
 import json
 
+import pytz
+from pytz import timezone
 from geopy.distance import great_circle
 import pdb
 
@@ -134,9 +136,13 @@ def main_student():
         if 'secret_code' in request.form.keys():
 
             # Provided_secret is student's secret code input
+            eastern = timezone('US/Eastern')
+        # tz = pytz.timezone('America/New_York')
+            current_time = datetime.now()
+
             provided_secret = request.form['secret_code']
 
-            provided_timestamp = datetime.now()
+            provided_timestamp = eastern.localize(current_time)
 
             provided_coordinate_data = json.load(urlopen(_URL + "/" + str(request.remote_addr)))
             provided_coordinate = [provided_coordinate_data['lat'], provided_coordinate_data['lon']]
@@ -150,7 +156,7 @@ def main_student():
             # valid = 4     invalid secret code
 
             if int(provided_secret) == int(actual_secret):
-                if (course_timestamp + timedelta(minutes=15)).replace(tzinfo=None) >= provided_timestamp:
+                if (course_timestamp + timedelta(minutes=15)) >= provided_timestamp:
                     distance = great_circle(tuple(provided_coordinate), tuple(course_coordinate)).meters
 
                     if distance <= 25:

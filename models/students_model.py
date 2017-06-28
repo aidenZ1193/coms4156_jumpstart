@@ -44,7 +44,7 @@ class Students(Model):
             query.add_filter('cid', '=', enrolled['cid'])
             sessions = list(query.fetch())
             for session in sessions:
-                if session['expires'].replace(tzinfo=None) > eastern.localize(current_time):
+                if session['expires'] > eastern.localize(current_time):
                     results.append(session)
             # results = results + list(query.fetch())
         if len(results) == 1:

@@ -119,7 +119,7 @@ class Courses(Model):
         sessions = list(query.fetch())
         results = list()
         for session in sessions:
-            if session['expires'].replace(tzinfo=None) > eastern.localize(current_time):
+            if session['expires'] > eastern.localize(current_time):
                 results.append(session)
 
         return results[0]['seid'] if len(results) == 1 else -1
@@ -211,7 +211,7 @@ class Courses(Model):
             query.add_filter('cid', '=', course['cid'])
             sessions = list(query.fetch())
             for session in sessions:
-                if session['expires'].replace(tzinfo=None) > eastern.localize(current_time):
+                if session['expires'] > eastern.localize(current_time):
                     results.append(session)
         return results[0]['secret'] if len(results) == 1 else None
 
@@ -229,7 +229,7 @@ class Courses(Model):
             query.add_filter('cid', '=', course['cid'])
             sessions = list(query.fetch())
             for session in sessions:
-                if session['expires'].replace(tzinfo=None) > eastern.localize(current_time):
+                if session['expires'] > eastern.localize(current_time):
                     results.append(session)
         return results[0]['timestamp'] if len(results) == 1 else None
 
@@ -246,7 +246,7 @@ class Courses(Model):
             query.add_filter('cid', '=', course['cid'])
             sessions = list(query.fetch())
             for session in sessions:
-                if session['expires'].replace(tzinfo=None) > eastern.localize(current_time):
+                if session['expires'] > eastern.localize(current_time):
                     results.append(session)
         return results[0]['coordinate'] if len(results) == 1 else None
 

@@ -8,6 +8,7 @@ from flask import request
 # Use for getting coordinate
 from urllib2 import urlopen
 import json
+import pytz
 
 
 _URL = 'http://ip-api.com/json'
@@ -148,6 +149,9 @@ class Courses(Model):
         randsecret = randint(1000, 9999)
 
         data = json.load(urlopen(_URL + "/" + str(request.remote_addr)))
+        tz pytz.timezone('America/New_York')
+        time = datetime.now()
+        pytz.utc.localize(time, is_dst=None).astimezone(tz)
 
         key = self.ds.key('sessions')
         entity = datastore.Entity(
@@ -157,7 +161,7 @@ class Courses(Model):
             'secret': int(randsecret),
             'expires': datetime.now() + timedelta(days=1),
             # Get the open session timestamp and save to entity
-            'timestamp': datetime.now(),
+            'timestamp': time,
             # Get the open seesion coordinate and save it as a tuple to entity
             'coordinate': [data['lat'], data['lon']]
         })

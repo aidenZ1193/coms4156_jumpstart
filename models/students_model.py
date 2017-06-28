@@ -2,7 +2,7 @@ from model import Model
 from datetime import datetime, date
 from google.cloud import datastore
 import pdb
-
+import pytz
 class Students(Model):
 
     def __init__(self, sid):
@@ -48,14 +48,17 @@ class Students(Model):
 
             # get course sign in timestamp
             if 'timestamp' not in results[0] or 'coordinate' not in results[0]:
-                course_timestamp = datetime.now()
+                tz pytz.timezone('America/New_York')
+                time = datetime.now()
+                pytz.utc.localize(time, is_dst=None).astimezone(tz)
+                course_timestamp = time
                 course_coordinate = [0, 0]
             else:
                 course_timestamp = results[0]['timestamp']
                 course_coordinate = results[0]['coordinate']
         else:
             # if nothing happend, let timestamp to be now
-            secret, seid, course_timestamp, course_coordinate = 999, -1, datetime.now(), (0,0)
+            secret, seid, course_timestamp, course_coordinate = 999, -1, datetime.now(tz), (0,0)
 
         # Return student_timestamp as well
         return secret, seid, course_timestamp, course_coordinate

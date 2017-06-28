@@ -108,7 +108,7 @@ class Students(Model):
         _, seid, _st, _sc = self.get_secret_and_seid()
 
         if seid == -1:
-            return datetime.now(), [0, 0]
+            return datetime.datetime.now(tz=EST5EDT()), [0, 0]
         else:
             query = self.ds.query(kind='sessions')
             query.add_filter('seid', '=', int(seid))

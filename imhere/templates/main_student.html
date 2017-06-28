@@ -111,7 +111,7 @@
             <div>
                 <div>
                     <center style="height:100%;"><h4 style="margin: 10% 0 10% 0;">{{n['name']}}</h4>
-                    {% if valid %}
+                    {% if valid == 1%}
                         Successful sign-in! <br>
                         Time: {{ signin_timestamp }} <br>
                         Coordinate: {{ signin_coordinate }}
@@ -133,8 +133,7 @@
                         </form>
 
                         {% if submitted %}
-                            {% if not valid %}
-
+                            {% if valid == 0%}
 
                                 <center style="margin: 10% 0 10% 0;"><font color="red">Invalid secret code.</font></center>
             

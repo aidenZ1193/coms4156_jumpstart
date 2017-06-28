@@ -10,3 +10,4 @@ httplib2
 pytest
 pytest-cov
 google-cloud==0.24.0
+pytz

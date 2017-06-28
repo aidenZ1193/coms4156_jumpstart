@@ -55,7 +55,7 @@ class Students(Model):
                 course_coordinate = results[0]['coordinate']
         else:
             # if nothing happend, let timestamp to be now
-            secret, seid, course_timestamp, course_coordinate = None, -1, datetime.now(), (0,0)
+            secret, seid, course_timestamp, course_coordinate = 999, -1, datetime.now(), (0,0)
 
         # Return student_timestamp as well
         return secret, seid, course_timestamp, course_coordinate

@@ -159,9 +159,9 @@ def main_student():
                     else: 
                         valid = 0
                 else:
-                    valid = 0
+                    valid = 2
             else:
-                valid = 0
+                valid = 3
 
             return render_template(
                     'main_student.html',

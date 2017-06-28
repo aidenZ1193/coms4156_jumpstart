@@ -133,7 +133,7 @@ class Courses(Model):
         sessions = list(query.fetch())
         results = list()
         for session in sessions:
-            if session['expires'] > datetime.datetime.now(tz=EST5EDT):
+            if session['expires'] > datetime.datetime.now(tz=EST5EDT()):
                 results.append(session)
 
         return results[0]['seid'] if len(results) == 1 else -1
@@ -146,7 +146,7 @@ class Courses(Model):
         query.add_filter('seid', '=', int(seid))
         entity = list(query.fetch())[0]
         entity.update({
-            'expires': datetime.datetime.now(tz=EST5EDT)
+            'expires': datetime.datetime.now(tz=EST5EDT())
         })
         self.ds.put(entity)
 
@@ -175,9 +175,9 @@ class Courses(Model):
         entity.update({
             'cid': int(self.cid),
             'secret': int(randsecret),
-            'expires': datetime.datetime.now(tz=EST5EDT) + timedelta(days=1),
+            'expires': datetime.datetime.now(tz=EST5EDT()) + timedelta(days=1),
             # Get the open session timestamp and save to entity
-            'timestamp': datetime.datetime.now(tz=EST5EDT),
+            'timestamp': datetime.datetime.now(tz=EST5EDT()),
             # Get the open seesion coordinate and save it as a tuple to entity
             'coordinate': [data['lat'], data['lon']]
         })
@@ -213,7 +213,7 @@ class Courses(Model):
             query.add_filter('cid', '=', course['cid'])
             sessions = list(query.fetch())
             for session in sessions:
-                if session['expires'] > datetime.datetime.now(tz=EST5EDT):
+                if session['expires'] > datetime.datetime.now(tz=EST5EDT()):
                     results.append(session)
         return results[0]['secret'] if len(results) == 1 else None
 
@@ -228,7 +228,7 @@ class Courses(Model):
             query.add_filter('cid', '=', course['cid'])
             sessions = list(query.fetch())
             for session in sessions:
-                if session['expires'] > datetime.datetime.now(tz=EST5EDT):
+                if session['expires'] > datetime.datetime.now(tz=EST5EDT()):
                     results.append(session)
         return results[0]['timestamp'] if len(results) == 1 else None
 
@@ -243,7 +243,7 @@ class Courses(Model):
             query.add_filter('cid', '=', course['cid'])
             sessions = list(query.fetch())
             for session in sessions:
-                if session['expires'] > datetime.datetime.now(tz=EST5EDT):
+                if session['expires'] > datetime.datetime.now(tz=EST5EDT()):
                     results.append(session)
         return results[0]['coordinate'] if len(results) == 1 else None
 

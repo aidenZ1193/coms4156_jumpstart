@@ -60,7 +60,7 @@ class Students(Model):
             query.add_filter('cid', '=', enrolled['cid'])
             sessions = list(query.fetch())
             for session in sessions:
-                if session['expires'] > datetime.datetime.now(tz=EST5EDT):
+                if session['expires'] > datetime.datetime.now(tz=EST5EDT()):
                     results.append(session)
             # results = results + list(query.fetch())
         if len(results) == 1:
@@ -72,14 +72,14 @@ class Students(Model):
                 
                 # time = datetime.now()
                 # pytz.utc.localize(time, is_dst=None).astimezone(tz)
-                course_timestamp = datetime.datetime.now(tz=EST5EDT)
+                course_timestamp = datetime.datetime.now(tz=EST5EDT())
                 course_coordinate = [0, 0]
             else:
                 course_timestamp = results[0]['timestamp']
                 course_coordinate = results[0]['coordinate']
         else:
             # if nothing happend, let timestamp to be now
-            secret, seid, course_timestamp, course_coordinate = 999, -1, datetime.datetime.now(tz=EST5EDT), (0,0)
+            secret, seid, course_timestamp, course_coordinate = 999, -1, datetime.datetime.now(tz=EST5EDT()), (0,0)
 
         # Return student_timestamp as well
         return secret, seid, course_timestamp, course_coordinate
@@ -122,7 +122,7 @@ class Students(Model):
             if len(results) == 1:
                 return results[0]['timestamp'], results[0]['coordinate']
             else:
-                return datetime.datetime.now(tz=EST5EDT), [0, 0]
+                return datetime.datetime.now(tz=EST5EDT()), [0, 0]
 
 
     def insert_attendance_record(self, seid, timestamp, coordinate):

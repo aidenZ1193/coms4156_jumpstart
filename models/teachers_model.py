@@ -27,8 +27,8 @@ class Teachers(Model):
 
     def __init__(self, tid):
         self.tid = tid
-        self.now = datetime.datetime.now(tz=EST5EDT)
-        self.today = datetime.today(tz=EST5EDT)
+        self.now = datetime.datetime.now(tz=EST5EDT())
+        self.today = datetime.today(tz=EST5EDT())
         self.ds = self.get_client()
 
     def get_courses(self):
@@ -59,7 +59,7 @@ class Teachers(Model):
             sessions = list(query.fetch())
 
             for session in sessions:
-                if session['expires'] > datetime.datetime.now(tz=EST5EDT):
+                if session['expires'] > datetime.datetime.now(tz=EST5EDT()):
                     results.append(session)
             if len(results) == 1:
                 course['secret'] = results[0]['secret']
@@ -71,8 +71,7 @@ class Teachers(Model):
                     # tz = pytz.timezone('America/New_York')
                     # time = datetime.now()
                     # pytz.utc.localize(time, is_dst=None).astimezone(tz)
-                    course['timestamp'] = datetime.datetime.now(tz=EST5EDT)
-                    course['coordinate'] = [0, 0]
+                    course['timestamp'] = datetime.datetime.now(tz=EST5EDT())                    course['coordinate'] = [0, 0]
                 else:
                     course['timestamp'] = results[0]['timestamp']
                     course['coordinate'] = results[0]['coordinate']

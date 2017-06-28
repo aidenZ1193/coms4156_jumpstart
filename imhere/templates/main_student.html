@@ -133,12 +133,14 @@
                         </form>
 
                         {% if submitted %}
-                            {% if valid == 2 %}
-                                <center style="height:10%;"><font color="red">Sign in out of distance range.</font></center>
-                            {% elif valid == 3 %}
-                                <center style="height:10%;"><font color="red">Sign in out of timestamp range.</font></center>
-                            {% elif valie == 4 %}
-                                <center style="height:10%;"><font color="red">Invalid secret code.</font></center>
+                            {% if valid != 1%}
+                                {% if valid == 2 %}
+                                    <center style="height:10%;"><font color="red">Sign in out of distance range.</font></center>
+                                {% elif valid == 3 %}
+                                    <center style="height:10%;"><font color="red">Sign in out of timestamp range.</font></center>
+                                {% elif valie == 4 %}
+                                    <center style="height:10%;"><font color="red">Invalid secret code.</font></center>
+                                {% endif %}
                             {% endif %}
                         {% endif %}
                     {% endif %}

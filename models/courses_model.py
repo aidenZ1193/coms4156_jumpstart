@@ -37,8 +37,8 @@ class Courses(Model):
 
     def __init__(self, cid=-1):
         self.cid = cid
-        self.now = datetime.time(datetime.now())
-        self.today = date.today()
+        self.now = datetime.datetime.now(tz=EST5EDT())
+        # self.today = date.today(tz=EST5EDT())
         self.ds = self.get_client()
 
     def get_course_name(self):

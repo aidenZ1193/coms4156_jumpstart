@@ -28,7 +28,7 @@ class Teachers(Model):
     def __init__(self, tid):
         self.tid = tid
         self.now = datetime.datetime.now(tz=EST5EDT())
-        self.today = datetime.today(tz=EST5EDT())
+        # self.today = date.today(tz=EST5EDT())
         self.ds = self.get_client()
 
     def get_courses(self):

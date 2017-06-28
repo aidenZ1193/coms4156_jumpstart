@@ -191,7 +191,7 @@ def main_student():
                     uni=sm.get_uni(),
                     signin_timestamp=provided_timestamp,
                     signin_coordinate=provided_coordinate,
-                    remote_addr=request.remote_addr,
+                    remote_addr=request.environ.get('HTTP_X_REAL_IP', request.remote_addr),
                     **context)
 
 

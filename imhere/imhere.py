@@ -8,7 +8,7 @@ import apiclient
 import flask
 
 from uuid import uuid4
-from flask import Flask, render_template, request, g
+from flask import Flask, render_template, request, g, jsonify
 from models import users_model, index_model, teachers_model, students_model, \
         courses_model, model
 from google.cloud import datastore
@@ -191,7 +191,7 @@ def main_student():
                     uni=sm.get_uni(),
                     signin_timestamp=provided_timestamp,
                     signin_coordinate=provided_coordinate,
-                    remote_addr=str(request.remote_addr),
+                    remote_addr=jsonify({"ip":request.remote_addr}),
                     **context)
 
 

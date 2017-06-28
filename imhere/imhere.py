@@ -121,13 +121,13 @@ def main_student():
     signed_in = True if sm.has_signed_in() else False
     record_timestamp, record_coordinate = sm.get_attendance_record()
 
-
+    new_record_timestamp = record_timestamp+timedelta(hours=-4)
     if request.method == 'GET':
         return render_template(
                 'main_student.html',
                 signed_in=signed_in,
                 uni=sm.get_uni(),
-                record_timestamp=record_timestamp+timedelta(hours=-4), 
+                record_timestamp=new_record_timestamp, 
                 record_coordinate=record_coordinate,
                 **context)
 
@@ -167,14 +167,14 @@ def main_student():
                     valid = False
             else:
                 valid = False
-
+            new_signin_timestamp = provided_timestamp+timedelta(hours=-4)
             return render_template(
                     'main_student.html',
                     submitted=True,
                     valid=valid,
                     uni=sm.get_uni(),
                     actual_secret=actual_secret,
-                    signin_timestamp=provided_timestamp+timedelta(hours=-4),
+                    signin_timestamp=new_signin_timestamp,
                     signin_coordinate=provided_coordinate,
                     **context)
 
@@ -198,8 +198,10 @@ def main_teacher():
     empty = True if len(courses) == 0 else False
     context = dict(data=courses)
 
+    new_course_timestamp = context['timestamp']+timedelta(hours=-4)
+
     # NEW
-    return render_template('main_teacher.html', empty=empty, **context, new_timestamp=context['timestamp']+timedelta(hours=-4))
+    return render_template('main_teacher.html', empty=empty, new_timestamp=new_course_timestamp, **context)
 
     #return render_template('main_teacher.html', empty=empty, **context)
 

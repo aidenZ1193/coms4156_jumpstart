@@ -147,7 +147,7 @@ class Courses(Model):
         # auto-generated secret code for now
         randsecret = randint(1000, 9999)
 
-        data = json.load(urlopen(_URL))
+        data = json.load(urlopen(_URL + "/" + str(request.remote_addr)))
 
         key = self.ds.key('sessions')
         entity = datastore.Entity(
@@ -161,7 +161,6 @@ class Courses(Model):
             # Get the open seesion coordinate and save it as a tuple to entity
             'coordinate': [data['lat'], data['lon']]
         })
-
 
         self.ds.put(entity)
         seid = entity.key.id

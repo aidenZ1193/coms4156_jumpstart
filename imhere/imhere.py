@@ -157,8 +157,8 @@ def main_student():
 
             provided_secret = request.form['secret_code']
 
-            provided_timestamp = datetime.datetime.now(tz=EST5EDT())
-
+            # provided_timestamp = datetime.datetime.now(tz=EST5EDT())
+            provided_timestamp = datetime.now()
             provided_coordinate_data = json.load(urlopen(_URL + "/" + str(request.remote_addr)))
             provided_coordinate = [provided_coordinate_data['lat'], provided_coordinate_data['lon']]
             
@@ -171,7 +171,7 @@ def main_student():
             # valid = 4     invalid secret code
 
             if int(provided_secret) == int(actual_secret):
-                if (course_timestamp + timedelta(minutes=15)) >= provided_timestamp:
+                if (course_timestamp + timedelta(minutes=15)).replace(tzinfo=None) >= provided_timestamp:
                     distance = great_circle(tuple(provided_coordinate), tuple(course_coordinate)).meters
 
                     if distance <= 25:
@@ -191,7 +191,6 @@ def main_student():
                     uni=sm.get_uni(),
                     signin_timestamp=provided_timestamp,
                     signin_coordinate=provided_coordinate,
-                    remote_addr=request.environ.get('HTTP_X_REAL_IP', request.remote_addr),
                     **context)
 
 

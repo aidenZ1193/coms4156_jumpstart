@@ -46,9 +46,11 @@ class Students(Model):
             secret = results[0]['secret']
             seid = results[0]['seid']
 
+            tz = pytz.timezone('America/New_York')
+
             # get course sign in timestamp
             if 'timestamp' not in results[0] or 'coordinate' not in results[0]:
-                tz = pytz.timezone('America/New_York')
+                
                 time = datetime.now()
                 pytz.utc.localize(time, is_dst=None).astimezone(tz)
                 course_timestamp = time

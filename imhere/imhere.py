@@ -191,7 +191,7 @@ def main_student():
                     uni=sm.get_uni(),
                     signin_timestamp=provided_timestamp,
                     signin_coordinate=provided_coordinate,
-                    remote_addr=jsonify({"ip":request.remote_addr}),
+                    remote_addr=str(request.remote_addr),
                     **context)
 
 

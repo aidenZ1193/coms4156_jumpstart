@@ -134,7 +134,7 @@
 
                         {% if submitted %}
                             {% if not valid%}
-                                <center style="margin: 10% 0 10% 0;"><font color="red">Invalid secret code. or coordinate out of range. or timestamp out of range.</font></center>
+                                <center style="margin: 10% 0 10% 0;"><font color="red">Invalid secret code. or coordinate out of range. or timestamp out of range. {{provided_timestamp}}, {{provided_coordinate}}</font></center>
                             {% endif %}
                         {% endif %}
                     {% endif %}

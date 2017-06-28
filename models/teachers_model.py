@@ -71,7 +71,8 @@ class Teachers(Model):
                     # tz = pytz.timezone('America/New_York')
                     # time = datetime.now()
                     # pytz.utc.localize(time, is_dst=None).astimezone(tz)
-                    course['timestamp'] = datetime.datetime.now(tz=EST5EDT())                    course['coordinate'] = [0, 0]
+                    course['timestamp'] = datetime.datetime.now(tz=EST5EDT())                    
+                    course['coordinate'] = [0, 0]
                 else:
                     course['timestamp'] = results[0]['timestamp']
                     course['coordinate'] = results[0]['coordinate']

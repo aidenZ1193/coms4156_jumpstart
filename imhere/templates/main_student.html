@@ -109,8 +109,8 @@
     {% for n in data %}
         {% if n['active'] == 1 %}
             <div>
-                <div style="height:100%;overflow: hidden;">
-                    <center style="height:50%;"><h4 style="padding: 10% 0 10% 0;margin:0;">{{n['name']}}</h4>
+                <div>
+                    <center style="height:100%;"><h4 style="margin: 10% 0 10% 0;">{{n['name']}}</h4>
                     {% if valid == 1 %}
                         Successful sign-in! <br>
                         Time: {{ signin_timestamp }} <br>
@@ -120,7 +120,7 @@
                         Timestamp:{{ record_timestamp }} <br>
                         Coordinate:{{ record_coordinate }}
                     {% else %}
-                        <form action="/student/" method="post" style="height: 100%; overflow: hidden;">
+                        <form action="/student/" method="post" style="margin: 10% 0 10% 0;">
 
                             <center>Sign in now!</center>
                             <br>
@@ -135,11 +135,11 @@
                         {% if submitted %}
                             {% if valid != 1%}
                                 {% if valid == 2 %}
-                                    <center style="height:10%;"><font color="red">Sign in out of distance range.</font></center>
+                                    <center style="margin: 10% 0 10% 0;"><font color="red">Sign in out of distance range.</font></center>
                                 {% elif valid == 3 %}
-                                    <center style="height:10%;"><font color="red">Sign in out of timestamp range.</font></center>
+                                    <center style="margin: 10% 0 10% 0;"><font color="red">Sign in out of timestamp range.</font></center>
                                 {% elif valie == 4 %}
-                                    <center style="height:10%;"><font color="red">Invalid secret code.</font></center>
+                                    <center style="margin: 10% 0 10% 0;"><font color="red">Invalid secret code.</font></center>
                                 {% endif %}
                             {% endif %}
                         {% endif %}

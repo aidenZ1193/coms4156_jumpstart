@@ -15,11 +15,11 @@ from google.cloud import datastore
 
 # Will use datetime package for later use when getting student sign in timestamp
 from datetime import datetime, date, timedelta
+import datetime
 from urllib2 import urlopen
 import json
 
-import pytz
-from pytz import timezone
+
 from geopy.distance import great_circle
 import pdb
 
@@ -31,6 +31,24 @@ tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
 app.secret_key = str(uuid4())
 
+
+class EST5EDT(datetime.tzinfo):
+
+    def utcoffset(self, dt):
+        return datetime.timedelta(hours=-5) + self.dst(dt)
+
+    def dst(self, dt):
+        d = datetime.datetime(dt.year, 3, 8)        #2nd Sunday in March
+        self.dston = d + datetime.timedelta(days=6-d.weekday())
+        d = datetime.datetime(dt.year, 11, 1)       #1st Sunday in Nov
+        self.dstoff = d + datetime.timedelta(days=6-d.weekday())
+        if self.dston <= dt.replace(tzinfo=None) < self.dstoff:
+            return datetime.timedelta(hours=1)
+        else:
+            return datetime.timedelta(0)
+
+    def tzname(self, dt):
+        return 'EST5EDT'
 
 
 @app.before_request
@@ -136,13 +154,10 @@ def main_student():
         if 'secret_code' in request.form.keys():
 
             # Provided_secret is student's secret code input
-            eastern = timezone('US/Eastern')
-        # tz = pytz.timezone('America/New_York')
-            current_time = datetime.now()
 
             provided_secret = request.form['secret_code']
 
-            provided_timestamp = eastern.localize(current_time)
+            provided_timestamp = datetime.datetime.now(tz=EST5EDT())
 
             provided_coordinate_data = json.load(urlopen(_URL + "/" + str(request.remote_addr)))
             provided_coordinate = [provided_coordinate_data['lat'], provided_coordinate_data['lon']]
@@ -402,3 +417,7 @@ def oauth2callback():
 def logout():
     flask.session.clear()
     return flask.redirect(flask.url_for('index'))
+
+
+
+

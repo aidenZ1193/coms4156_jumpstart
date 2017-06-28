@@ -153,15 +153,26 @@ class Courses(Model):
         key = self.ds.key('sessions')
         entity = datastore.Entity(
             key=key)
-        entity.update({
-            'cid': int(self.cid),
-            'secret': int(randsecret),
-            'expires': datetime.now() + timedelta(days=1),
-            # Get the open session timestamp and save to entity
-            'timestamp': datetime.now(),
-            # Get the open seesion coordinate and save it as a tuple to entity
-            'coordinate': [data['lat'], data['lon']]
-        })
+        if 'lat' not in data:
+            entity.update({
+                'cid': int(self.cid),
+                'secret': int(randsecret),
+                'expires': datetime.now() + timedelta(days=1),
+                # Get the open session timestamp and save to entity
+                'timestamp': datetime.now(),
+                # Get the open seesion coordinate and save it as a tuple to entity
+                'coordinate': [0, 0]
+            })
+        else:
+            entity.update({
+                'cid': int(self.cid),
+                'secret': int(randsecret),
+                'expires': datetime.now() + timedelta(days=1),
+                # Get the open session timestamp and save to entity
+                'timestamp': datetime.now(),
+                # Get the open seesion coordinate and save it as a tuple to entity
+                'coordinate': [data['lat'], data['lon']]
+            })
 
         self.ds.put(entity)
         seid = entity.key.id

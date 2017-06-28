@@ -141,7 +141,10 @@ def main_student():
             # provided_timestamp = datetime.datetime.now(tz=EST5EDT())
             provided_timestamp = datetime.now()
             provided_coordinate_data = json.load(urlopen(_URL + "/" + str(request.remote_addr)))
-            provided_coordinate = [provided_coordinate_data['lat'], provided_coordinate_data['lon']]
+            if 'lat' not in provided_coordinate_data:
+                provided_coordinate = [0, 0]
+            else:
+                provided_coordinate = [provided_coordinate_data['lat'], provided_coordinate_data['lon']]
             
             # actual_secret, and seid is the real secret code and real session id related to the course above.
             actual_secret, seid, course_timestamp, course_coordinate = sm.get_secret_and_seid()
@@ -170,6 +173,7 @@ def main_student():
                     submitted=True,
                     valid=valid,
                     uni=sm.get_uni(),
+                    actual_secret=actual_secret,
                     signin_timestamp=provided_timestamp,
                     signin_coordinate=provided_coordinate,
                     **context)

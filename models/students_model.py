@@ -34,6 +34,7 @@ class Students(Model):
         query = self.ds.query(kind='enrolled_in')
         enrolled_in = list(query.fetch())
         results = list()
+        tz = pytz.timezone('America/New_York')
         for enrolled in enrolled_in:
             query = self.ds.query(kind='sessions')
             query.add_filter('cid', '=', enrolled['cid'])
@@ -45,8 +46,6 @@ class Students(Model):
         if len(results) == 1:
             secret = results[0]['secret']
             seid = results[0]['seid']
-
-            tz = pytz.timezone('America/New_York')
 
             # get course sign in timestamp
             if 'timestamp' not in results[0] or 'coordinate' not in results[0]:

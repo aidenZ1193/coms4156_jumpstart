@@ -33,6 +33,7 @@ class Students(Model):
     # Also have to change the function name as well.
     def get_secret_and_seid(self):
         query = self.ds.query(kind='enrolled_in')
+        query.add_filter('sid', '=', self.sid)
         enrolled_in = list(query.fetch())
         results = list()
 

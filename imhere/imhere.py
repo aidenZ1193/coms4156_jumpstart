@@ -155,13 +155,13 @@ def main_student():
 
                     if distance <= 25:
                         sm.insert_attendance_record(seid, provided_timestamp, provided_coordinate)
-                        valid = 1
+                        valid = True
                     else: 
-                        valid = 2
+                        valid = False
                 else:
-                    valid = 3
+                    valid = False
             else:
-                valid = 4
+                valid = False
 
             return render_template(
                     'main_student.html',

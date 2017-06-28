@@ -111,7 +111,7 @@
             <div>
                 <div>
                     <center style="height:100%;"><h4 style="margin: 10% 0 10% 0;">{{n['name']}}</h4>
-                    {% if valid == 1 %}
+                    {% if valid %}
                         Successful sign-in! <br>
                         Time: {{ signin_timestamp }} <br>
                         Coordinate: {{ signin_coordinate }}
@@ -133,14 +133,11 @@
                         </form>
 
                         {% if submitted %}
-                            {% if valid != 1%}
-                                {% if valid == 2 %}
-                                    <center style="margin: 10% 0 10% 0;"><font color="red">Sign in out of distance range.</font></center>
-                                {% elif valid == 3 %}
-                                    <center style="margin: 10% 0 10% 0;"><font color="red">Sign in out of timestamp range.</font></center>
-                                {% elif valie == 4 %}
-                                    <center style="margin: 10% 0 10% 0;"><font color="red">Invalid secret code.</font></center>
-                                {% endif %}
+                            {% if not valid %}
+
+
+                                <center style="margin: 10% 0 10% 0;"><font color="red">Invalid secret code.</font></center>
+            
                             {% endif %}
                         {% endif %}
                     {% endif %}

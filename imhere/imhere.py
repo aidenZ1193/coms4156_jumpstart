@@ -197,8 +197,10 @@ def main_teacher():
     courses = tm.get_courses_with_session()
     empty = True if len(courses) == 0 else False
     context = dict(data=courses)
-
-    new_course_timestamp = context['timestamp']+timedelta(hours=-4)
+    if "timestamp" not in context:
+        new_course_timestamp = datetime.now() + timedelta(hours=-4)
+    else:
+        new_course_timestamp = context['timestamp']+timedelta(hours=-4)
 
     # NEW
     return render_template('main_teacher.html', empty=empty, new_timestamp=new_course_timestamp, **context)

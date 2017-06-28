@@ -9,36 +9,17 @@ from flask import request
 from urllib2 import urlopen
 import json
 
-import datetime
 
 
 _URL = 'http://ip-api.com/json'
 
 
-class EST5EDT(datetime.tzinfo):
-
-    def utcoffset(self, dt):
-        return datetime.timedelta(hours=-5) + self.dst(dt)
-
-    def dst(self, dt):
-        d = datetime.datetime(dt.year, 3, 8)        #2nd Sunday in March
-        self.dston = d + datetime.timedelta(days=6-d.weekday())
-        d = datetime.datetime(dt.year, 11, 1)       #1st Sunday in Nov
-        self.dstoff = d + datetime.timedelta(days=6-d.weekday())
-        if self.dston <= dt.replace(tzinfo=None) < self.dstoff:
-            return datetime.timedelta(hours=1)
-        else:
-            return datetime.timedelta(0)
-
-    def tzname(self, dt):
-        return 'EST5EDT'
-
 class Courses(Model):
 
     def __init__(self, cid=-1):
         self.cid = cid
-        self.now = datetime.datetime.now(tz=EST5EDT())
-        # self.today = date.today(tz=EST5EDT())
+        self.now = datetime.now()
+        self.today = date.today()
         self.ds = self.get_client()
 
     def get_course_name(self):
@@ -133,7 +114,7 @@ class Courses(Model):
         sessions = list(query.fetch())
         results = list()
         for session in sessions:
-            if session['expires'] > datetime.datetime.now(tz=EST5EDT()):
+            if session['expires'].replace(tzinfo=None) > datetime.now():
                 results.append(session)
 
         return results[0]['seid'] if len(results) == 1 else -1
@@ -146,7 +127,7 @@ class Courses(Model):
         query.add_filter('seid', '=', int(seid))
         entity = list(query.fetch())[0]
         entity.update({
-            'expires': datetime.datetime.now(tz=EST5EDT())
+            'expires': datetime.now()
         })
         self.ds.put(entity)
 
@@ -175,9 +156,9 @@ class Courses(Model):
         entity.update({
             'cid': int(self.cid),
             'secret': int(randsecret),
-            'expires': datetime.datetime.now(tz=EST5EDT()) + timedelta(days=1),
+            'expires': datetime.now() + timedelta(days=1),
             # Get the open session timestamp and save to entity
-            'timestamp': datetime.datetime.now(tz=EST5EDT()),
+            'timestamp': datetime.now(),
             # Get the open seesion coordinate and save it as a tuple to entity
             'coordinate': [data['lat'], data['lon']]
         })
@@ -213,7 +194,7 @@ class Courses(Model):
             query.add_filter('cid', '=', course['cid'])
             sessions = list(query.fetch())
             for session in sessions:
-                if session['expires'] > datetime.datetime.now(tz=EST5EDT()):
+                if session['expires'].replace(tzinfo=None) > datetime.now():
                     results.append(session)
         return results[0]['secret'] if len(results) == 1 else None
 
@@ -228,7 +209,7 @@ class Courses(Model):
             query.add_filter('cid', '=', course['cid'])
             sessions = list(query.fetch())
             for session in sessions:
-                if session['expires'] > datetime.datetime.now(tz=EST5EDT()):
+                if session['expires'].replace(tzinfo=None) > datetime.now():
                     results.append(session)
         return results[0]['timestamp'] if len(results) == 1 else None
 
@@ -243,7 +224,7 @@ class Courses(Model):
             query.add_filter('cid', '=', course['cid'])
             sessions = list(query.fetch())
             for session in sessions:
-                if session['expires'] > datetime.datetime.now(tz=EST5EDT()):
+                if session['expires'].replace(tzinfo=None) > datetime.now():
                     results.append(session)
         return results[0]['coordinate'] if len(results) == 1 else None
 

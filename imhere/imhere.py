@@ -15,7 +15,7 @@ from google.cloud import datastore
 
 # Will use datetime package for later use when getting student sign in timestamp
 from datetime import datetime, date, timedelta
-import datetime
+
 from urllib2 import urlopen
 import json
 
@@ -30,25 +30,6 @@ _URL = "http://ip-api.com/json"
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
 app.secret_key = str(uuid4())
-
-
-class EST5EDT(datetime.tzinfo):
-
-    def utcoffset(self, dt):
-        return datetime.timedelta(hours=-5) + self.dst(dt)
-
-    def dst(self, dt):
-        d = datetime.datetime(dt.year, 3, 8)        #2nd Sunday in March
-        self.dston = d + datetime.timedelta(days=6-d.weekday())
-        d = datetime.datetime(dt.year, 11, 1)       #1st Sunday in Nov
-        self.dstoff = d + datetime.timedelta(days=6-d.weekday())
-        if self.dston <= dt.replace(tzinfo=None) < self.dstoff:
-            return datetime.timedelta(hours=1)
-        else:
-            return datetime.timedelta(0)
-
-    def tzname(self, dt):
-        return 'EST5EDT'
 
 
 @app.before_request

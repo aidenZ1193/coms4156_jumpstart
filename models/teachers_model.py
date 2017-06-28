@@ -3,32 +3,12 @@ from datetime import datetime, date
 from google.cloud import datastore
 import pdb
 
-import datetime
-
-class EST5EDT(datetime.tzinfo):
-
-    def utcoffset(self, dt):
-        return datetime.timedelta(hours=-5) + self.dst(dt)
-
-    def dst(self, dt):
-        d = datetime.datetime(dt.year, 3, 8)        #2nd Sunday in March
-        self.dston = d + datetime.timedelta(days=6-d.weekday())
-        d = datetime.datetime(dt.year, 11, 1)       #1st Sunday in Nov
-        self.dstoff = d + datetime.timedelta(days=6-d.weekday())
-        if self.dston <= dt.replace(tzinfo=None) < self.dstoff:
-            return datetime.timedelta(hours=1)
-        else:
-            return datetime.timedelta(0)
-
-    def tzname(self, dt):
-        return 'EST5EDT'
-
 class Teachers(Model):
 
     def __init__(self, tid):
         self.tid = tid
-        self.now = datetime.datetime.now(tz=EST5EDT())
-        # self.today = date.today(tz=EST5EDT())
+        self.now = datetime.now()
+        self.today = date.today()
         self.ds = self.get_client()
 
     def get_courses(self):
@@ -59,7 +39,7 @@ class Teachers(Model):
             sessions = list(query.fetch())
 
             for session in sessions:
-                if session['expires'] > datetime.datetime.now(tz=EST5EDT()):
+                if session['expires'].replace(tzinfo=None) > datetime.now():
                     results.append(session)
             if len(results) == 1:
                 course['secret'] = results[0]['secret']
@@ -71,7 +51,7 @@ class Teachers(Model):
                     # tz = pytz.timezone('America/New_York')
                     # time = datetime.now()
                     # pytz.utc.localize(time, is_dst=None).astimezone(tz)
-                    course['timestamp'] = datetime.datetime.now(tz=EST5EDT())                    
+                    course['timestamp'] = datetime.now()                    
                     course['coordinate'] = [0, 0]
                 else:
                     course['timestamp'] = results[0]['timestamp']

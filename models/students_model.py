@@ -3,25 +3,6 @@ from datetime import datetime, date
 from google.cloud import datastore
 import pdb
 
-import datetime
-
-class EST5EDT(datetime.tzinfo):
-
-    def utcoffset(self, dt):
-        return datetime.timedelta(hours=-5) + self.dst(dt)
-
-    def dst(self, dt):
-        d = datetime.datetime(dt.year, 3, 8)        #2nd Sunday in March
-        self.dston = d + datetime.timedelta(days=6-d.weekday())
-        d = datetime.datetime(dt.year, 11, 1)       #1st Sunday in Nov
-        self.dstoff = d + datetime.timedelta(days=6-d.weekday())
-        if self.dston <= dt.replace(tzinfo=None) < self.dstoff:
-            return datetime.timedelta(hours=1)
-        else:
-            return datetime.timedelta(0)
-
-    def tzname(self, dt):
-        return 'EST5EDT'
 
 class Students(Model):
 
@@ -60,7 +41,7 @@ class Students(Model):
             query.add_filter('cid', '=', enrolled['cid'])
             sessions = list(query.fetch())
             for session in sessions:
-                if session['expires'] > datetime.datetime.now(tz=EST5EDT()):
+                if session['expires'].replace(tzinfo=None) > datetime.now():
                     results.append(session)
             # results = results + list(query.fetch())
         if len(results) == 1:
@@ -72,14 +53,14 @@ class Students(Model):
                 
                 # time = datetime.now()
                 # pytz.utc.localize(time, is_dst=None).astimezone(tz)
-                course_timestamp = datetime.datetime.now(tz=EST5EDT())
+                course_timestamp = datetime.now()
                 course_coordinate = [0, 0]
             else:
                 course_timestamp = results[0]['timestamp']
                 course_coordinate = results[0]['coordinate']
         else:
             # if nothing happend, let timestamp to be now
-            secret, seid, course_timestamp, course_coordinate = 999, -1, datetime.datetime.now(tz=EST5EDT()), (0,0)
+            secret, seid, course_timestamp, course_coordinate = 999, -1, datetime.now(), [0,0]
 
         # Return student_timestamp as well
         return secret, seid, course_timestamp, course_coordinate
@@ -108,7 +89,7 @@ class Students(Model):
         _, seid, _st, _sc = self.get_secret_and_seid()
 
         if seid == -1:
-            return datetime.datetime.now(tz=EST5EDT()), [0, 0]
+            return datetime.now(), [0, 0]
         else:
             query = self.ds.query(kind='sessions')
             query.add_filter('seid', '=', int(seid))
@@ -122,7 +103,7 @@ class Students(Model):
             if len(results) == 1:
                 return results[0]['timestamp'], results[0]['coordinate']
             else:
-                return datetime.datetime.now(tz=EST5EDT()), [0, 0]
+                return datetime.now(), [0, 0]
 
 
     def insert_attendance_record(self, seid, timestamp, coordinate):

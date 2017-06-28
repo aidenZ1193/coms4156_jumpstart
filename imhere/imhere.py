@@ -167,6 +167,7 @@ def main_student():
                     'main_student.html',
                     submitted=True,
                     valid=valid,
+                    uni=sm.get_uni(),
                     signin_timestamp=provided_timestamp,
                     signin_coordinate=provided_coordinate,
                     **context)

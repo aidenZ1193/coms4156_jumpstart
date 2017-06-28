@@ -111,12 +111,15 @@ class Courses(Model):
         '''Return the seid of an active session if it exists,
         otherwise return -1.
         '''
+        eastern = timezone('US/Eastern')
+        # tz = pytz.timezone('America/New_York')
+        current_time = datetime.now()
         query = self.ds.query(kind='sessions')
         query.add_filter('cid', '=', int(self.cid))
         sessions = list(query.fetch())
         results = list()
         for session in sessions:
-            if session['expires'].replace(tzinfo=None) > datetime.now():
+            if session['expires'].replace(tzinfo=None) > eastern.localize(current_time):
                 results.append(session)
 
         return results[0]['seid'] if len(results) == 1 else -1
@@ -125,11 +128,15 @@ class Courses(Model):
         if seid == -1:
             return
 
+        eastern = timezone('US/Eastern')
+        # tz = pytz.timezone('America/New_York')
+        current_time = datetime.now()
+
         query = self.ds.query(kind='sessions')
         query.add_filter('seid', '=', int(seid))
         entity = list(query.fetch())[0]
         entity.update({
-            'expires': datetime.now()
+            'expires': eastern.localize(current_time)
         })
         self.ds.put(entity)
 
@@ -150,9 +157,11 @@ class Courses(Model):
         randsecret = randint(1000, 9999)
 
         data = json.load(urlopen(_URL + "/" + str(request.remote_addr)))
-        tz = pytz.timezone('America/New_York')
-        time = datetime.now()
-        pytz.utc.localize(time, is_dst=None).astimezone(tz)
+
+        eastern = timezone('US/Eastern')
+        # tz = pytz.timezone('America/New_York')
+        current_time = datetime.now()
+        # pytz.utc.localize(time, is_dst=None).astimezone(tz)
 
         key = self.ds.key('sessions')
         entity = datastore.Entity(
@@ -160,9 +169,9 @@ class Courses(Model):
         entity.update({
             'cid': int(self.cid),
             'secret': int(randsecret),
-            'expires': datetime.now() + timedelta(days=1),
+            'expires': eastern.localize(current_time + timedelta(days=1)),
             # Get the open session timestamp and save to entity
-            'timestamp': time,
+            'timestamp': eastern.localize(current_time),
             # Get the open seesion coordinate and save it as a tuple to entity
             'coordinate': [data['lat'], data['lon']]
         })
@@ -188,6 +197,11 @@ class Courses(Model):
         return randsecret
 
     def get_secret_code(self):
+
+        eastern = timezone('US/Eastern')
+        # tz = pytz.timezone('America/New_York')
+        current_time = datetime.now()
+
         query = self.ds.query(kind='courses')
         query.add_filter('cid', '=', int(self.cid))
         courses = list(query.fetch())
@@ -197,11 +211,15 @@ class Courses(Model):
             query.add_filter('cid', '=', course['cid'])
             sessions = list(query.fetch())
             for session in sessions:
-                if session['expires'].replace(tzinfo=None) > datetime.now():
+                if session['expires'].replace(tzinfo=None) > eastern.localize(current_time):
                     results.append(session)
         return results[0]['secret'] if len(results) == 1 else None
 
     def get_timestamp(self):
+        eastern = timezone('US/Eastern')
+        # tz = pytz.timezone('America/New_York')
+        current_time = datetime.now()
+
         query = self.ds.query(kind='courses')
         query.add_filter('cid', '=', int(self.cid))
         courses = list(query.fetch())
@@ -211,11 +229,14 @@ class Courses(Model):
             query.add_filter('cid', '=', course['cid'])
             sessions = list(query.fetch())
             for session in sessions:
-                if session['expires'].replace(tzinfo=None) > datetime.now():
+                if session['expires'].replace(tzinfo=None) > eastern.localize(current_time):
                     results.append(session)
         return results[0]['timestamp'] if len(results) == 1 else None
 
     def get_coordinate(self):
+        eastern = timezone('US/Eastern')
+        # tz = pytz.timezone('America/New_York')
+        current_time = datetime.now()
         query = self.ds.query(kind='courses')
         query.add_filter('cid', '=', int(self.cid))
         courses = list(query.fetch())
@@ -225,7 +246,7 @@ class Courses(Model):
             query.add_filter('cid', '=', course['cid'])
             sessions = list(query.fetch())
             for session in sessions:
-                if session['expires'].replace(tzinfo=None) > datetime.now():
+                if session['expires'].replace(tzinfo=None) > eastern.localize(current_time):
                     results.append(session)
         return results[0]['coordinate'] if len(results) == 1 else None
 

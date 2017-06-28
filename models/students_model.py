@@ -35,13 +35,16 @@ class Students(Model):
         query = self.ds.query(kind='enrolled_in')
         enrolled_in = list(query.fetch())
         results = list()
-        tz = pytz.timezone('America/New_York')
+        eastern = timezone('US/Eastern')
+        # tz = pytz.timezone('America/New_York')
+        current_time = datetime.now()
+        # tz = pytz.timezone('America/New_York')
         for enrolled in enrolled_in:
             query = self.ds.query(kind='sessions')
             query.add_filter('cid', '=', enrolled['cid'])
             sessions = list(query.fetch())
             for session in sessions:
-                if session['expires'].replace(tzinfo=None) > datetime.now():
+                if session['expires'].replace(tzinfo=None) > eastern.localize(current_time):
                     results.append(session)
             # results = results + list(query.fetch())
         if len(results) == 1:
@@ -51,16 +54,16 @@ class Students(Model):
             # get course sign in timestamp
             if 'timestamp' not in results[0] or 'coordinate' not in results[0]:
                 
-                time = datetime.now()
-                pytz.utc.localize(time, is_dst=None).astimezone(tz)
-                course_timestamp = time
+                # time = datetime.now()
+                # pytz.utc.localize(time, is_dst=None).astimezone(tz)
+                course_timestamp = eastern.localize(current_time)
                 course_coordinate = [0, 0]
             else:
                 course_timestamp = results[0]['timestamp']
                 course_coordinate = results[0]['coordinate']
         else:
             # if nothing happend, let timestamp to be now
-            secret, seid, course_timestamp, course_coordinate = 999, -1, datetime.now(tz), (0,0)
+            secret, seid, course_timestamp, course_coordinate = 999, -1, eastern.localize(current_time), (0,0)
 
         # Return student_timestamp as well
         return secret, seid, course_timestamp, course_coordinate
@@ -87,7 +90,9 @@ class Students(Model):
 
     def get_attendance_record(self):
         _, seid, _st, _sc = self.get_secret_and_seid()
+        eastern = timezone('US/Eastern')
 
+        current_time = datetime.now()
         if seid == -1:
             return datetime.now(), [0, 0]
         else:
@@ -103,7 +108,7 @@ class Students(Model):
             if len(results) == 1:
                 return results[0]['timestamp'], results[0]['coordinate']
             else:
-                return datetime.now(), [0, 0]
+                return eastern.localize(current_time), [0, 0]
 
 
     def insert_attendance_record(self, seid, timestamp, coordinate):

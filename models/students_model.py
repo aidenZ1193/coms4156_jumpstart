@@ -2,6 +2,7 @@ from model import Model
 from datetime import datetime, date
 from google.cloud import datastore
 import pdb
+import pytz
 
 class Students(Model):
 
@@ -31,6 +32,7 @@ class Students(Model):
 
     # Also have to change the function name as well.
     def get_secret_and_seid(self):
+        tz = pytz.timezone('America/New_York')      ### convert timezone
         query = self.ds.query(kind='enrolled_in')
         enrolled_in = list(query.fetch())
         results = list()
@@ -48,14 +50,17 @@ class Students(Model):
 
             # get course sign in timestamp
             if 'timestamp' not in results[0] or 'coordinate' not in results[0]:
-                course_timestamp = datetime.now()
+                time = datetime.now()
+                pytz.utc.localize(time, is_dst=None).astimezone(tz)
+                course_timestamp = time
+                pdb.set_trace()
                 course_coordinate = [0, 0]
             else:
                 course_timestamp = results[0]['timestamp']
                 course_coordinate = results[0]['coordinate']
         else:
             # if nothing happend, let timestamp to be now
-            secret, seid, course_timestamp, course_coordinate = None, -1, datetime.now(), (0,0)
+            secret, seid, course_timestamp, course_coordinate = None, -1, datetime.now(tz), (0,0)
 
         # Return student_timestamp as well
         return secret, seid, course_timestamp, course_coordinate
@@ -82,9 +87,10 @@ class Students(Model):
 
     def get_attendance_record(self):
         _, seid, _st, _sc = self.get_secret_and_seid()
+        tz = pytz.timezone('America/New_York')
 
         if seid == -1:
-            return datetime.now(), [0, 0]
+            return datetime.now(tz), [0, 0]
         else:
             query = self.ds.query(kind='sessions')
             query.add_filter('seid', '=', int(seid))
@@ -98,7 +104,7 @@ class Students(Model):
             if len(results) == 1:
                 return results[0]['timestamp'], results[0]['coordinate']
             else:
-                return datetime.now(), [0, 0]
+                return datetime.now(tz), [0, 0]
 
 
     def insert_attendance_record(self, seid, timestamp, coordinate):

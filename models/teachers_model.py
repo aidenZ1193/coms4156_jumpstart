@@ -1,6 +1,8 @@
 from model import Model
 from datetime import datetime, date
 from google.cloud import datastore
+import pytz
+import pdb
 
 class Teachers(Model):
 
@@ -22,6 +24,7 @@ class Teachers(Model):
         return results
 
     def get_courses_with_session(self):
+        tz = pytz.timezone('America/New_York')
         query = self.ds.query(kind='teaches')
         query.add_filter('tid', '=', self.tid)
         teaches = list(query.fetch())
@@ -41,11 +44,12 @@ class Teachers(Model):
                     results.append(session)
             if len(results) == 1:
                 course['secret'] = results[0]['secret']
+                #pdb.set_trace()
 
                 # We get the timestamp of sessions and let store it to course timestamp as well. 
                 # for later use
                 if 'timestamp' not in results[0] or 'coordinate' not in results[0]:
-                    course['timestamp'] = datetime.now()
+                    course['timestamp'] = datetime.now(tz)
                     course['coordinate'] = [0, 0]
                 else:
                     course['timestamp'] = results[0]['timestamp']

@@ -6,6 +6,8 @@ from google.cloud import datastore
 # Use for getting coordinate
 from urllib2 import urlopen
 import json
+import pytz
+import pdb
 
 _URL = 'http://ip-api.com/json'
 
@@ -140,9 +142,14 @@ class Courses(Model):
         and returns the secret code for that session.
         '''
         # auto-generated secret code for now
+        tz = pytz.timezone('America/New_York')      ### convert timezone
         randsecret = randint(1000, 9999)
 
         data = json.load(urlopen(_URL))
+        time = datetime.now()
+        #time = time.astimezone(pytz.utc)
+        pytz.utc.localize(time, is_dst=None).astimezone(tz)
+        pdb.set_trace()
 
         key = self.ds.key('sessions')
         entity = datastore.Entity(
@@ -152,7 +159,7 @@ class Courses(Model):
             'secret': int(randsecret),
             'expires': datetime.now() + timedelta(days=1),
             # Get the open session timestamp and save to entity
-            'timestamp': datetime.now(),
+            'timestamp': time,
             # Get the open seesion coordinate and save it as a tuple to entity
             'coordinate': [data['lat'], data['lon']]
         })
@@ -203,6 +210,7 @@ class Courses(Model):
             for session in sessions:
                 if session['expires'].replace(tzinfo=None) > datetime.now():
                     results.append(session)
+        #pdb.set_trace()
         return results[0]['timestamp'] if len(results) == 1 else None
 
     def get_coordinate(self):

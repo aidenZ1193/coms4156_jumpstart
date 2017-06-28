@@ -184,6 +184,7 @@ def main_teacher():
     courses = tm.get_courses_with_session()
     empty = True if len(courses) == 0 else False
     context = dict(data=courses)
+    #pdb.set_trace()
     return render_template('main_teacher.html', empty=empty, **context)
 
 

@@ -4,7 +4,6 @@ import uuid
 import flask
 
 #from google.appengine.ext import db
-
 import imhere
 from models import model, users_model, index_model, teachers_model, students_model, courses_model
 import pdb
@@ -162,7 +161,7 @@ class unit_tests(unittest.TestCase):
 	        query = datastore_client.query(kind='courses')
 	        query.add_filter('name', '=', coursename_2remove)
 	        courses_2remove = list(query.fetch())
-	        pdb.set_trace()
+	        #pdb.set_trace()
 	        self.assertEqual(len(courses_2remove), 1)
 	        data = {'cid':courses_2remove[0]['cid']}
 
@@ -230,7 +229,7 @@ class unit_tests(unittest.TestCase):
 	       		
 	       	data = {"close": self.cid_2}
 	       	rv = t_t.post("/teacher/", data=data)
-	       	pdb.set_trace()
+	       	#pdb.set_trace()
 	       	self.assertIn("Open Attendance Window", rv.data)	
 	       	self.assertNotIn("Secret Code", rv.data)	
 
@@ -296,6 +295,7 @@ class unit_tests(unittest.TestCase):
 
 			# Open Sign-in & get secret code
 			real_secret_code = course_1.open_session()
+			#pdb.set_trace()
 			rv = t_s.get('/student/')
 			self.assertIn("Sign in now!", rv.data)
 			self.assertIn("Student View", rv.data)

@@ -156,6 +156,8 @@ def main_student():
             # valid = 2     out of distance range
             # valid = 3     out of timestamp range
             # valid = 4     invalid secret code
+            if provided_secret == '':
+                provided_secret = 999
 
             if int(provided_secret) == int(actual_secret):
                 if (course_timestamp + timedelta(minutes=15)).replace(tzinfo=None) >= provided_timestamp:

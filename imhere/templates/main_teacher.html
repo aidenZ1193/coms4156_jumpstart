@@ -80,7 +80,7 @@
             border-radius:20px;
         }
 
-        .openclose-button {
+        .open-button, .close-button {
             background: #92b5a3;
             border: 1px solid #92b5a3;
             cursor: pointer;
@@ -92,7 +92,7 @@
             height: 100%;
         }
 
-        .openclose-button:hover{
+        .open-button:hover, .close-button:hover{
             background: #6d887a;
             border: 1px solid #6d887a;
         }
@@ -157,14 +157,13 @@
                             {{n['secret']}}<br>
                             <!-- Show timestamp on the screen -->
                             <strong>Timestamp:</strong><br>
-                            {{new_timestamp}}<br>
                             {{n['timestamp']}}<br>
 
                             <strong>Coordinate:</strong><br>
                             {{n['coordinate']}}
                         </div>
                         <form method="POST" action="/teacher/">
-                            <button name="close" value="{{n['cid']}}" class="openclose-button">Close Attendance Window
+                            <button name="close" value="{{n['cid']}}" class="close-button">Close Attendance Window
                             </button>
                         </form>
                     </center>
@@ -180,7 +179,7 @@
                             </button>
                         </form>
                         <form method="POST" action="/teacher/" style="height: 50%;">
-                            <button name="open" value="{{n['cid']}}" class="openclose-button">Open Attendance Window
+                            <button name="open" value="{{n['cid']}}" class="open-button">Open Attendance Window
                             </button>
                         </form>
                     </center>
@@ -190,7 +189,6 @@
         {% endif %}
     {% endfor %}
     </div>
-
 
 
 </body>

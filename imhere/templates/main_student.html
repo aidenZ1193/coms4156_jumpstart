@@ -111,14 +111,20 @@
             <div>
                 <div>
                     <center style="height:100%;"><h4 style="margin: 10% 0 10% 0;">{{n['name']}}</h4>
-                    {% if valid %}
+                    {% if valid == 1%}
                         Successful sign-in! <br>
                         Time: {{ signin_timestamp }} <br>
                         Coordinate: {{ signin_coordinate }}
+                    {% elif valid == 3 %}
+                        <strong>LATE ATTENDANCE! BE ON TIME NEXT TIME!</strong><br>
                     {% elif signed_in %}
-                        You have already signed into the session!<br>
-                        Timestamp:{{ record_timestamp }} <br>
-                        Coordinate:{{ record_coordinate }}
+                        {% if ontime_or_not %}
+                            You have already signed into the session!<br>
+                            Timestamp:{{ record_timestamp }} <br>
+                            Coordinate:{{ record_coordinate }}
+                        {% else %}
+                            <strong>LATE ATTENDANCE! BE ON TIME NEXT TIME!</strong>
+                        {% endif %}
                     {% else %}
                         <form action="/student/" method="post" style="margin: 10% 0 10% 0;">
 
@@ -133,8 +139,10 @@
                         </form>
 
                         {% if submitted %}
-                            {% if not valid%}
-                                <center style="margin: 10% 0 10% 0;"><font color="red">Invalid Secret Code. or coordinate out of range. or timestamp out of range. {{provided_timestamp}}, {{provided_coordinate}}, {{actual_secret}}</font></center>
+                            {% if valid == 2%}
+                                <center style="margin: 10% 0 10% 0;"><font color="red">Distance out of range. Try again!</font></center>
+                            {% elif valid == 4 %}
+                                <center style="margin: 10% 0 10% 0;"><font color="red">Invalid Secret Code. Try again!</font></center>
                             {% endif %}
                         {% endif %}
                     {% endif %}

@@ -118,14 +118,17 @@ def main_student():
     sm = students_model.Students(flask.session['id'])
     courses = sm.get_courses()
     context = dict(data=courses)
-    signed_in = True if sm.has_signed_in() else False
+    signed_in, ontime_or_not = sm.has_signed_in()
+    # signed_in = True if sm.has_signed_in() else False
     record_timestamp, record_coordinate = sm.get_attendance_record()
-
+    valid = 0
     new_record_timestamp = record_timestamp+timedelta(hours=-4)
     if request.method == 'GET':
         return render_template(
                 'main_student.html',
+                valid=valid,
                 signed_in=signed_in,
+                ontime_or_not=ontime_or_not,
                 uni=sm.get_uni(),
                 record_timestamp=new_record_timestamp, 
                 record_coordinate=record_coordinate,
@@ -159,14 +162,15 @@ def main_student():
                     distance = great_circle(tuple(provided_coordinate), tuple(course_coordinate)).meters
 
                     if distance <= 25:
-                        sm.insert_attendance_record(seid, provided_timestamp, provided_coordinate)
-                        valid = True
+                        sm.insert_attendance_record(seid, provided_timestamp, provided_coordinate, True)
+                        valid = 1
                     else: 
-                        valid = False
+                        valid = 2
                 else:
-                    valid = False
+                    sm.insert_attendance_record(seid, provided_timestamp, provided_coordinate, False)
+                    valid = 3
             else:
-                valid = False
+                valid = 4
             new_signin_timestamp = provided_timestamp+timedelta(hours=-4)
             return render_template(
                     'main_student.html',
@@ -197,13 +201,8 @@ def main_teacher():
     courses = tm.get_courses_with_session()
     empty = True if len(courses) == 0 else False
     context = dict(data=courses)
-    if "timestamp" not in context:
-        new_course_timestamp = datetime.now() + timedelta(hours=-4)
-    else:
-        new_course_timestamp = context['timestamp']+timedelta(hours=-4)
 
-    # NEW
-    return render_template('main_teacher.html', empty=empty, new_timestamp=new_course_timestamp, **context)
+    return render_template('main_teacher.html', empty=empty, **context)
 
     #return render_template('main_teacher.html', empty=empty, **context)
 
@@ -300,14 +299,16 @@ def view_class():
             sm = students_model.Students(student['id'])
             student_uni = sm.get_uni()
             num_ar = sm.get_num_attendance_records(cid)
-            students_with_ar.append([student, student_uni, num_ar])
+            num_late = sm.get_num_late_attendance_records(cid)
+            students_with_ar.append([student, student_uni, num_ar, num_late])
 
         context = dict(students=students_with_ar)
+        new_timestamp = timestamp+timedelta(hours=-4)
         return render_template(
                 'view_class.html',
                 cid=cid,
                 secret=secret,
-                timestamp=timestamp,
+                timestamp=new_timestamp,
                 coordinate=coordinate,
                 course_name=course_name,
                 num_sessions=num_sessions,

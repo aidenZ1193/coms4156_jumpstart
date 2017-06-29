@@ -191,6 +191,7 @@
             <th>E-Mail</th>
             <th>UNI</th>
             <th>Attendance</th>
+            <th>Late Attendance</th>
         </tr>
         </thead>
 
@@ -201,6 +202,7 @@
             <td align="center">{{student[0]['email']}}</td>
             <td align="center">{{student[1]}}</td>
             <td align="center">{{student[2]}}/{{num_sessions}}</td>
+            <td align="center">{{student[3]}}</td>
         </tr>
         {% endfor %}
         </table><br><br>

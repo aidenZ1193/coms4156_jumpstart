@@ -1,5 +1,5 @@
 from model import Model
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from google.cloud import datastore
 import pdb
 
@@ -51,10 +51,10 @@ class Teachers(Model):
                     # tz = pytz.timezone('America/New_York')
                     # time = datetime.now()
                     # pytz.utc.localize(time, is_dst=None).astimezone(tz)
-                    course['timestamp'] = datetime.now()                    
+                    course['timestamp'] = datetime.now()  + timedelta(hours=-4)                   
                     course['coordinate'] = [0, 0]
                 else:
-                    course['timestamp'] = results[0]['timestamp']
+                    course['timestamp'] = results[0]['timestamp'] + timedelta(hours=-4)
                     course['coordinate'] = results[0]['coordinate']
         # result = courses + sessions
         return courses

@@ -73,7 +73,7 @@ class Students(Model):
         _, seid, _st, _sc = self.get_secret_and_seid()
 
         if seid == -1:
-            return False
+            return False, False
         else:
             query = self.ds.query(kind='sessions')
             query.add_filter('seid', '=', int(seid))
@@ -84,7 +84,16 @@ class Students(Model):
                 query.add_filter('seid', '=', int(session['seid']))
                 query.add_filter('sid', '=', self.sid)
                 results = results + list(query.fetch())
-            return True if len(results) == 1 else False
+
+            if len(results) == 1:
+                if results[0]['ontime'] == True:
+                    return True, True
+                else:
+                    return True, False
+            else:
+                return False, False
+            # return True if len(results) == 1 else False
+
 
     def get_attendance_record(self):
         _, seid, _st, _sc = self.get_secret_and_seid()
@@ -107,20 +116,31 @@ class Students(Model):
                 return datetime.now(), [0, 0]
 
 
-    def insert_attendance_record(self, seid, timestamp, coordinate):
+    def insert_attendance_record(self, seid, timestamp, coordinate, ontime):
         key = self.ds.key('attendance_records')
-        entity = datastore.Entity(
-            key=key)
-        entity.update({
-            'sid': self.sid,
-            'seid': int(seid),
-            # Add timestamp and coordinate related with student id and session id
-            'timestamp': timestamp,
-            'coordinate':coordinate,
-            'seid': int(seid)
-        })
+        entity = datastore.Entity(key=key)
+        if ontime:
+            entity.update({
+                'sid': self.sid,
+                'seid': int(seid),
+                # Add timestamp and coordinate related with student id and session id
+                'timestamp': timestamp,
+                'coordinate':coordinate,
+                'seid': int(seid),
+                'ontime': True
+            })
+        else:
+            entity.update({
+                'sid': self.sid,
+                'seid': int(seid),
+                # Add timestamp and coordinate related with student id and session id
+                'timestamp': timestamp,
+                'coordinate':coordinate,
+                'seid': int(seid),
+                'ontime': False
+            })
         self.ds.put(entity)
-
+        
 
     def get_num_attendance_records(self, cid):
         query = self.ds.query(kind='sessions')
@@ -135,3 +155,15 @@ class Students(Model):
         return len(results)
 
 
+    def get_num_late_attendance_records(self, cid):
+        query = self.ds.query(kind='sessions')
+        query.add_filter('cid', '=', int(cid))
+        sessions = list(query.fetch())
+        results = list()
+        for session in sessions:
+            query = self.ds.query(kind='attendance_records')
+            query.add_filter('seid', '=', session['seid'])
+            query.add_filter('sid', '=', self.sid)
+            query.add_filter('ontime', '=', False)
+            results = results + list(query.fetch())
+        return len(results)

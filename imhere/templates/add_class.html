@@ -69,7 +69,11 @@
         <br>
 
         {% if invalid_uni %}
-            <font color="red">Invalid UNI's entered, please recreate the class</font> 
+            <font color="red">Invalid UNI's entered, please recreate the class.</font> 
+        {% endif %}
+
+        {% if existed_course %}
+            <font color="red">Course already existed! Please recreate the class.</font> 
         {% endif %}
         </center>
     </div>

@@ -231,11 +231,16 @@ def add_class():
         # then create course and add students to course
         course_name = request.form['classname']
         cid = tm.add_course(course_name)
+
+        if cid == -100:
+            return render_template('add_class.html', invalid_uni=False, existed_course=True)
+
         cm = courses_model.Courses(cid)
 
         for uni in request.form['unis'].split('\n'):
             uni = uni.strip('\r')
             cm.add_student(uni)
+
 
         return flask.redirect(flask.url_for('main_teacher'))
 

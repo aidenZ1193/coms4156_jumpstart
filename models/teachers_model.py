@@ -61,6 +61,13 @@ class Teachers(Model):
 
 
     def add_course(self, course_name):
+
+        query = self.ds.query(kind='courses')
+        query.add_filter('name', '=', course_name)
+        result = list(query.fetch())
+        if len(result) == 1:
+            return -100
+
         key = self.ds.key('courses')
         entity = datastore.Entity(
             key=key)

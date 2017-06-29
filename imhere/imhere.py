@@ -202,9 +202,12 @@ def main_teacher():
     empty = True if len(courses) == 0 else False
     context = dict(data=courses)
 
-    return render_template('main_teacher.html', empty=empty, **context)
+    disable_rest_open_windows = False
+    for item in context['data']:
+        if item['active'] == 1:
+            disable_rest_open_windows = True
 
-    #return render_template('main_teacher.html', empty=empty, **context)
+    return render_template('main_teacher.html', empty=empty, disable_rest_open_windows=disable_rest_open_windows,**context)
 
 
 @app.route('/teacher/add_class', methods=['POST', 'GET'])
@@ -256,6 +259,7 @@ def remove_class():
 
 @app.route('/teacher/view_class', methods=['POST', 'GET'])
 def view_class():
+    tm = teachers_model.Teachers(flask.session['id'])
     if request.method == 'GET':
         flask.redirect(flask.url_for('main_teacher'))
 
@@ -303,7 +307,20 @@ def view_class():
             students_with_ar.append([student, student_uni, num_ar, num_late])
 
         context = dict(students=students_with_ar)
-        new_timestamp = timestamp+timedelta(hours=-4)
+        if timestamp:
+            new_timestamp = timestamp+timedelta(hours=-4)
+        else:
+            new_timestamp = "NO TIME."
+
+
+        courses = tm.get_courses_with_session()
+        context = dict(data=courses)
+
+        disable_rest_open_windows = False
+        for item in context['data']:
+            if item['active'] == 1:
+                disable_rest_open_windows = True
+
         return render_template(
                 'view_class.html',
                 cid=cid,
@@ -313,6 +330,7 @@ def view_class():
                 course_name=course_name,
                 num_sessions=num_sessions,
                 uni=uni,
+                disable_rest_open_windows=disable_rest_open_windows,
                 res=res,
                 **context)
 

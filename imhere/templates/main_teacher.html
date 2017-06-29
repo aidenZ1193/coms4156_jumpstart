@@ -178,10 +178,12 @@
                                 <h4 style="padding: 25% 0 25% 0;margin:0; text-decoration: none;color: black;">{{n['name']}}</h4>
                             </button>
                         </form>
+                        {% if not disable_rest_open_windows %}
                         <form method="POST" action="/teacher/" style="height: 50%;">
                             <button name="open" value="{{n['cid']}}" class="open-button">Open Attendance Window
                             </button>
                         </form>
+                        {% endif %}
                     </center>
                 </div>
             </div>

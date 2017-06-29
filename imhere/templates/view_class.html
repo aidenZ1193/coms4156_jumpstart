@@ -123,10 +123,12 @@
                                 </button>
                             </form>
                         {% else %}
+                            {% if not disable_rest_open_windows %}
                             <form method="POST" action="/teacher/view_class" style="height: 40%;">
                                 <button name="open" value="{{cid}}" class="openclose-button">Open Attendance Window
                                 </button>
                             </form><br>
+                            {% endif %}
                         {% endif %}
                     </center>
                 </div>

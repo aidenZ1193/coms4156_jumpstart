@@ -90,6 +90,7 @@
             font-weight: bolder;
             border-radius: 0 0 20px 20px;
             height: 100%;
+            width: 100%;
         }
 
         .open-button:hover, .close-button:hover{
@@ -183,6 +184,8 @@
                             <button name="open" value="{{n['cid']}}" class="open-button">Open Attendance Window
                             </button>
                         </form>
+                        {% else %}
+                            <p>There exists an active attendance window. Please close it first and you can open this attendance window.</p>
                         {% endif %}
                     </center>
                 </div>

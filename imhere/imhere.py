@@ -314,10 +314,10 @@ def view_class():
 
 
         courses = tm.get_courses_with_session()
-        context = dict(data=courses)
+        context_course = dict(data=courses)
 
         disable_rest_open_windows = False
-        for item in context['data']:
+        for item in context_course['data']:
             if item['active'] == 1:
                 disable_rest_open_windows = True
 

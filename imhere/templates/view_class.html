@@ -56,6 +56,9 @@
             border-radius: 0 0 20px 20px;
             height: 100%;
         }
+        .openclose-button {
+            width: 100%;
+        }
         .openclose-button, .add-button {
             background: #92b5a3;
             border: 1px solid #92b5a3;
@@ -110,9 +113,8 @@
                 border-radius:20px;">
                 <div style="height: 100%; overflow: hidden;">
                     <center style="height: 100%;">
-
-                        <h4 style="padding: 25% 0 25% 0;margin:0; text-decoration: none;color: black;">{{course_name}}</h4>
                         {% if secret %}
+                            <h4 style="text-decoration: none;color: black;margin-top: 50px;margin-bottom:50px;">{{course_name}}</h4>
                             <div style="background-color: beige;text-align: left; padding:5px;">
                                 <strong>Secret Code:</strong>{{secret}}<br>
                                 <strong>Timestamp:</strong><br>{{timestamp}}<br>
@@ -123,11 +125,14 @@
                                 </button>
                             </form>
                         {% else %}
+                            <h4 style="text-decoration: none;color: black;height: calc(50% - 50px);margin-top: 50px;">{{course_name}}</h4>
                             {% if not disable_rest_open_windows %}
-                            <form method="POST" action="/teacher/view_class" style="height: 40%;">
+                            <form method="POST" action="/teacher/view_class" style="height: 50%;">
                                 <button name="open" value="{{cid}}" class="openclose-button">Open Attendance Window
                                 </button>
                             </form><br>
+                            {% else %}
+                            <p>There exists an active attendance window. Please close it first and you can open this attendance window.</p>
                             {% endif %}
                         {% endif %}
                     </center>

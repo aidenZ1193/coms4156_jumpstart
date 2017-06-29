@@ -328,7 +328,7 @@ class unit_tests(unittest.TestCase):
 				session_teacher['is_teacher'] = True
 			rv = t_t.get("/teacher/remove_class")
 			#self.assertIn("Class List", rv.data)
-			self.assertIn("Remove Class", rv.data)
+			self.assertIn("Remove a Class", rv.data)
 			self.assertIn("COMS 4111", rv.data)
 			self.assertEqual(200, rv.status_code)
 

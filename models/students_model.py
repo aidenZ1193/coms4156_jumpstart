@@ -126,7 +126,7 @@ class Students(Model):
                 # Add timestamp and coordinate related with student id and session id
                 'timestamp': timestamp,
                 'coordinate':coordinate,
-                'seid': int(seid),
+                #'seid': int(seid),
                 'ontime': True
             })
         else:
@@ -136,7 +136,7 @@ class Students(Model):
                 # Add timestamp and coordinate related with student id and session id
                 'timestamp': timestamp,
                 'coordinate':coordinate,
-                'seid': int(seid),
+                #'seid': int(seid),
                 'ontime': False
             })
         self.ds.put(entity)

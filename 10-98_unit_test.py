@@ -74,7 +74,7 @@ class unit_tests(unittest.TestCase):
 		teacher_instance = teachers_model.Teachers(TEACHER_ACCOUNT_ID)
 		classname_1 = "COMS 4111"
 		self.__class__.cid_1 = teacher_instance.add_course(classname_1)
-		course_instance_1 = courses_model.Courses(self.__class__.cid_1)
+		#course_instance_1 = courses_model.Courses(self.__class__.cid_1)
 		#course_instance_1.add_student('xz2222')
 
 		classname_2 = "COMS 4112"
@@ -102,9 +102,6 @@ class unit_tests(unittest.TestCase):
 
 	# Add two classes and students
 	def test_b_teacher_add_and_remove_class(self):
-		def db():
-
-			imhere.app.secret_key = str(uuid.uuid4())
 		with imhere.app.test_client() as t_t:
 			rv = t_t.get("/teacher/add_class")
 			self.assertEqual(302, rv.status_code)
@@ -150,19 +147,11 @@ class unit_tests(unittest.TestCase):
 			# Remove class starts from here
 			coursename_2remove = "COMS 2738"
 
-			## get cid
-
-
-			# query = "select cid from courses where name = 'COMS 2738'"
-   #      	cursor = db.execute(query)
-   #      	for item in cursor:
-   #      		cid = item[0]
-   #      	data = {'cid': cid}
    			datastore_client = datastore.Client()
 	        query = datastore_client.query(kind='courses')
 	        query.add_filter('name', '=', coursename_2remove)
 	        courses_2remove = list(query.fetch())
-	        pdb.set_trace()
+	        #pdb.set_trace()
 	        self.assertEqual(len(courses_2remove), 1)
 	        data = {'cid':courses_2remove[0]['cid']}
 
@@ -230,7 +219,7 @@ class unit_tests(unittest.TestCase):
 	       		
 	       	data = {"close": self.cid_2}
 	       	rv = t_t.post("/teacher/", data=data)
-	       	pdb.set_trace()
+	       	#pdb.set_trace()
 	       	self.assertIn("Open Attendance Window", rv.data)	
 	       	self.assertNotIn("Secret Code", rv.data)	
 

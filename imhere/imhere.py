@@ -1,5 +1,12 @@
 #!/usr/bin/env python2.7
 
+## code demo, line 119 main_students
+## In this method, we implemented when student signs in during sign-in window open.
+## We grap student account's sign in information - time and location. By location 
+## it means the gps information of the account at this specific time.
+## The geometry and time information is used to compare with the info from lecturer's
+## account, hence to find out if the student is at the same place with lecturer at the samem time.
+
 import os
 import httplib2
 
